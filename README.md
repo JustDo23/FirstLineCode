@@ -137,9 +137,124 @@
 
 ## 第 2 章 Activity
 
+### 01. 菜单
 
+1. 创建菜单文件
+
+   ```java
+   <?xml version="1.0" encoding="utf-8"?>
+   <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+     <item
+       android:id="@+id/menu_add"
+       android:title="Add" />
+
+     <item
+       android:id="@+id/menu_remove"
+       android:title="Remove" />
+
+   </menu>
+   ```
+
+2. 在 Activity 中进行添加和处理
+
+   ```java
+     /**
+      * 创建自定义菜单
+      *
+      * @param menu 系统指定的菜单对象
+      * @return true, 表示允许创建的菜单显示出来
+      */
+     @Override
+     public boolean onCreateOptionsMenu(Menu menu) {
+       getMenuInflater().inflate(R.menu.menu, menu);// 从资源中加载菜单
+       return true;// 允许菜单显示
+     }
+
+     /**
+      * 菜单 Item 的点击事件
+      *
+      * @param item 菜单 Item
+      * @return
+      */
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+       switch (item.getItemId()) {
+         case R.id.menu_add:
+           ToastUtil.showShortToast(this, "Add");
+           break;
+         case R.id.menu_remove:
+           ToastUtil.showShortToast(this, "Remove");
+           break;
+       }
+       return true;
+     }
+   ```
+
+### 02. Intent 
+
+1. 显式 Intent
+
+2. 隐式 Intent
+
+   * action  每个 Intent 中只能指定一个 action
+   * category  每个 Intent 中可以指定多个 category
+   * data
+
+3. data 详解
+
+   * android:scheme  用于指定数据的**协议**部分。
+   * android:host  用于指定数据的**主机名**部分。
+   * android:port  用于指定数据的**端口**部分。
+   * android:path  用于指定**主机名和端口之后**部分。
+   * android:mimeType  用于指定**可处理的数据类型**，允许使用**通配符**的方式进行指定。
+
+   只有<data>标签中指定的内容和 Intent 中携带的 Data 完全一致是，当前活动才能够响应该 Intent。
+
+### 03. Activity 的生命周期
+
+1. 返回栈
+
+   其实 Android 是使用**任务（Task）**来管理活动的，**一个任务**就是**一组**存放在**栈**里的活动的集合，这个栈也被称作返回栈（Back Stack）。栈是一种后进先出的数据接口。
+
+2. 活动状态
+
+   1. 运行状态
+   2. 暂停状态
+   3. 停止状态
+   4. 销毁状态
+
+3. 生命周期函数
+
+   * onCreat() 初始化操作，加载布局，绑定事件等
+   * onStart()
+   * onResume()
+   * onPause()
+     * 这个方法在系统准备去启动或者恢复另一个活动的时候调用。我们通常会在这个方法中将一些消耗 CPU 的**资源释放掉**，以及**保存一些关键数据**，但这个方法的执行速度一定要快，不然会影响到新的栈顶活动的使用。
+   * onStop()
+   * onDestroy() 活动被销毁之前调用
+   * onRestart()
+
+4. 活动的生存期
+
+   * 完整生存期
+   * 可见生存期
+   * 前台生存期
+
+### 04. 活动被回收
+
+
+
+### 05. 启动模式
+
+1. 四种启动模式
+   * standard
+   * singleTop
+   * singleTask
+   * singleInstance
 
 ### 0x. 小结
 
 1. 关于向下兼容的 **AppCompatActivity** 需要学习。
+2. 关于**栈**和**堆**的相关知识需要学习总结。
 
