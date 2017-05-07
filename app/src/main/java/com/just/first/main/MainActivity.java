@@ -1,5 +1,6 @@
 package com.just.first.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import com.just.first.R;
 import com.just.first.base.BaseActivity;
 import com.just.first.base.OnBaseOperationListener;
-import com.just.first.utils.ToastUtil;
+import com.just.first.chapter02.IntentActivity;
+import com.just.first.chapter02.MenuActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +47,8 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
    * 初始化数据
    */
   private void initData() {
-    chapterList.add("第一张");
-    chapterList.add("第2张");
+    chapterList.add("2.2.5 在活动使用 Menu");
+    chapterList.add("2.3.3 更多隐式 Intent 的用法");
     chapterList.add("第3张");
     chapterList.add("第4张");
   }
@@ -55,8 +57,11 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
   public void onBaseOperationListener(Object... obj) {
     int position = (int) obj[0];
     switch (chapterList.get(position)) {
-      case "第一张":
-        ToastUtil.showShortToast(this, "第一张");
+      case "2.2.5 在活动使用 Menu":
+        startActivity(new Intent(this, MenuActivity.class));
+        break;
+      case "2.3.3 更多隐式 Intent 的用法":
+        startActivity(new Intent(this, IntentActivity.class));
         break;
     }
   }
