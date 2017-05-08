@@ -20,6 +20,7 @@
     <activity android:name=".chapter02.LifeCycleActivity" />
     <activity android:name=".chapter02.RecoveryActivity" />
     <activity android:name=".chapter02.KillAllActivity" />
+    <activity android:name=".chapter02.StartActivity" />
   </application>
 
 </manifest>

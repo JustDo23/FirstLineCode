@@ -13,6 +13,7 @@ import com.just.first.chapter02.KillAllActivity;
 import com.just.first.chapter02.LifeCycleActivity;
 import com.just.first.chapter02.MenuActivity;
 import com.just.first.chapter02.RecoveryActivity;
+import com.just.first.chapter02.StartActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("2.4.4 体验活动的生命周期");
     chapterList.add("2.4.5 活动被回收了怎么办");
     chapterList.add("2.6.2 随时随地退出程序");
+    chapterList.add("2.6.3 启动活动的最佳写法");
   }
 
   @Override
@@ -75,6 +77,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "2.6.2 随时随地退出程序":
         startActivity(new Intent(this, KillAllActivity.class));
+        break;
+      case "2.6.3 启动活动的最佳写法":
+        StartActivity.actionStart(this, "JustDo23", "KeepKeep");
         break;
     }
   }
