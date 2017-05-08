@@ -17,6 +17,8 @@
     </activity>
     <activity android:name=".chapter02.MenuActivity" />
     <activity android:name=".chapter02.IntentActivity" />
+    <activity android:name=".chapter02.LifeCycleActivity" />
+    <activity android:name=".chapter02.RecoveryActivity" />
   </application>
 
 </manifest>

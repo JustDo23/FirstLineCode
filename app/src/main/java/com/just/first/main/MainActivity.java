@@ -9,7 +9,9 @@ import com.just.first.R;
 import com.just.first.base.BaseActivity;
 import com.just.first.base.OnBaseOperationListener;
 import com.just.first.chapter02.IntentActivity;
+import com.just.first.chapter02.LifeCycleActivity;
 import com.just.first.chapter02.MenuActivity;
+import com.just.first.chapter02.RecoveryActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +51,8 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
   private void initData() {
     chapterList.add("2.2.5 在活动使用 Menu");
     chapterList.add("2.3.3 更多隐式 Intent 的用法");
-    chapterList.add("第3张");
-    chapterList.add("第4张");
+    chapterList.add("2.4.4 体验活动的生命周期");
+    chapterList.add("2.4.5 活动被回收了怎么办");
   }
 
   @Override
@@ -62,6 +64,12 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "2.3.3 更多隐式 Intent 的用法":
         startActivity(new Intent(this, IntentActivity.class));
+        break;
+      case "2.4.4 体验活动的生命周期":
+        startActivity(new Intent(this, LifeCycleActivity.class));
+        break;
+      case "2.4.5 活动被回收了怎么办":
+        startActivity(new Intent(this, RecoveryActivity.class));
         break;
     }
   }

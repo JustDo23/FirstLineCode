@@ -14,7 +14,7 @@ import com.just.first.utils.LogUtils;
  */
 public class BaseActivity extends AppCompatActivity {
 
-  private String simpleName;
+  protected String simpleName;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
