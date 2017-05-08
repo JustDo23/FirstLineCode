@@ -135,6 +135,8 @@
 4. 代码混淆相关的知识需要重新学习总结。
 5. 打印日志是否会影响性能和效率？
 
+
+
 ## 第 2 章 Activity
 
 ### 01. 菜单
@@ -243,7 +245,66 @@
 
 ### 04. 活动被回收
 
+1. 场景：应用中有一个活动 A，用户在活动 A 的基础上启动了活动 B，活动 A 就进入了**停止状态**，这个时候由于**系统内存不足**，将活动 A 回收掉了，然后用户按下 **Back 键**返回活动 A，会出现什么情况？会正常显示活动 A 但**不会**执行活动 A 的 onRestart() 方法，**会**执行 onCreate() 方法将活动 A 重新创建一次。
 
+   问题：打个比方，活动 A 中有一个文本输入框，用户输入一段文字，然后启动了活动 B，这时候活动 A 被回收了，按下 Back 键返回活动 A，却发现输入的文字全部都没了。数据怎么存储？
+
+2. 生命周期回调：
+
+   ```java
+   // 启动活动 A
+   JustDo23: RecoveryActivity ---> onCreate()
+   JustDo23: RecoveryActivity ---> onStart()
+   JustDo23: RecoveryActivity ---> onResume()
+   // 在活动 A 的基础上启动活动 B
+   JustDo23: RecoveryActivity ---> onPause()
+   JustDo23: RecoveryActivity ---> onSaveInstanceState()
+   JustDo23: RecoveryActivity ---> onStop()
+   JustDo23: RecoveryActivity ---> onDestroy()
+   // 按下 Back 键返回活动 A
+   JustDo23: RecoveryActivity ---> onCreate()
+   JustDo23: RecoveryActivity ---> tempData = Something you just typed
+   JustDo23: RecoveryActivity ---> onStart()
+   JustDo23: RecoveryActivity ---> onResume()
+   ```
+
+3. 解决方法：Activity 中提供了一个 onSaveInstanceState() 方法，可以保证活动被回收之前一定会被调用。在活动的 onCreate() 方法中有一个对应的 Bundle 类型参数 saveInstanceState 从中获取保存的数据。
+
+4. 实现代码：
+
+   ```java
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       setContentView(R.layout.activity_recovery);
+       if (savedInstanceState != null) {// 取出保存的数据
+         String tempData = savedInstanceState.getString("data_key");
+         LogUtils.e(simpleName + " ---> " + "tempData = " + tempData);
+       }
+     }
+
+     @Override
+     public void onSaveInstanceState(Bundle outState) {
+       super.onSaveInstanceState(outState);// 在销毁前进行的数据保存
+       String tempData = "Something you just typed";
+       outState.putString("data_key", tempData);
+     }
+   ```
+
+5. 测试方法
+
+   第一步，打开**开发者选项**；第二步，勾选**不保留活动**用户离开后即销毁每个活动。
+
+6. 测试发现
+
+   在测试中使用 EditText 测试 Activity 被系统回收，但发现返回之后 Activity 和 EditText 的确都是被重新创建了，但是 EditText 中输入的内容却仍然存在。其实是 View 有类似的保存数据的效果。
+
+7. 其他
+
+   * [关于开发者选项中的启用严格模式](http://www.miui.com/thread-3130429-1-1.html)
+   * [Android 中正确保存view的状态](http://jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0512/2870.html)
+   * [View的onSaveInstanceState和onRestoreInstanceState过程分析](http://www.cnblogs.com/xiaoweiz/p/3813914.html)
+   * [如何保存和恢复 Activity 状态](http://www.epubit.com.cn/book/onlinechapter/14222)
 
 ### 05. 启动模式
 
@@ -252,9 +313,25 @@
    * singleTop
    * singleTask
    * singleInstance
+2. 指定为 singleInstance 模式的活动会启用一个新的返回栈来管理这个活动（其实如果 singTask 模式指定了不同的 **taskAffinity**，也会启动一个新的返回栈）。程序中有一个活动是允许其他程序调用的，则使用此模式。其他三种不能实现是因为每个应用都会有自己的返回栈，同一个活动在不同的返回栈中入栈时必须是创建了新的实例。
 
-### 0x. 小结
+### 06. 小结
 
 1. 关于向下兼容的 **AppCompatActivity** 需要学习。
 2. 关于**栈**和**堆**的相关知识需要学习总结。
+3. 弹出 **Dialog** 或者 **PopupWindow** 并**不影响** Activity 的生命周期。
+4. 在**开发者选项**中的各个功能的使用方式。
+5. 和启动模式相关的有一个 **onNewIntent(Intent intent)** 方法需要注意。
+6. Activity 的 taskAffinity 属性。
+7. 随时随地退出程序。
+8. 启动活动的最佳写法。
+9. 退出程序的相关问题，如何真正退出程序，杀掉进程，最优做法是什么？
+
+
+
+## 第 3 章 View 
+
+
+
+
 
