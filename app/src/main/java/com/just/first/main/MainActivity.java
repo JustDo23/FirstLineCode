@@ -9,6 +9,7 @@ import com.just.first.R;
 import com.just.first.base.BaseActivity;
 import com.just.first.base.OnBaseOperationListener;
 import com.just.first.chapter02.IntentActivity;
+import com.just.first.chapter02.KillAllActivity;
 import com.just.first.chapter02.LifeCycleActivity;
 import com.just.first.chapter02.MenuActivity;
 import com.just.first.chapter02.RecoveryActivity;
@@ -53,6 +54,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("2.3.3 更多隐式 Intent 的用法");
     chapterList.add("2.4.4 体验活动的生命周期");
     chapterList.add("2.4.5 活动被回收了怎么办");
+    chapterList.add("2.6.2 随时随地退出程序");
   }
 
   @Override
@@ -70,6 +72,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "2.4.5 活动被回收了怎么办":
         startActivity(new Intent(this, RecoveryActivity.class));
+        break;
+      case "2.6.2 随时随地退出程序":
+        startActivity(new Intent(this, KillAllActivity.class));
         break;
     }
   }
