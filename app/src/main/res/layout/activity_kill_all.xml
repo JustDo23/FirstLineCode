@@ -4,6 +4,8 @@
   android:layout_height="match_parent"
   android:padding="16dp">
 
+  <!-- android:textAllCaps="false" -->
+
   <Button
     android:id="@+id/bt_kill_all"
     android:layout_width="match_parent"

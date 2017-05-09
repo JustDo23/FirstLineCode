@@ -14,6 +14,7 @@ import com.just.first.chapter02.LifeCycleActivity;
 import com.just.first.chapter02.MenuActivity;
 import com.just.first.chapter02.RecoveryActivity;
 import com.just.first.chapter02.StartActivity;
+import com.just.first.chapter03.CommonViewActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("2.4.5 活动被回收了怎么办");
     chapterList.add("2.6.2 随时随地退出程序");
     chapterList.add("2.6.3 启动活动的最佳写法");
+    chapterList.add("3.2.x 常用控件的使用方法");
   }
 
   @Override
@@ -80,6 +82,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "2.6.3 启动活动的最佳写法":
         StartActivity.actionStart(this, "JustDo23", "KeepKeep");
+        break;
+      case "3.2.x 常用控件的使用方法":
+        startActivity(new Intent(this, CommonViewActivity.class));
         break;
     }
   }
