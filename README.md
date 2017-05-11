@@ -137,6 +137,8 @@
 
 
 
+
+
 ## 第 2 章 Activity
 
 ### 01. 菜单
@@ -329,7 +331,58 @@
 
 
 
+
+
 ## 第 3 章 View 
+
+### 01. Button
+
+这里主要记录一下，在布局文件里面给 Button 设置的文字是**"Button"**，但是最终的显示结果却是**"BUTTON"**，小写变大写。这是由于系统会对 Button 中的所有英文字母自动进行大写转换，使用以下代码禁止这一默认特性：
+
+```java
+android:textAllCaps="false"
+```
+
+其次，给按钮设置点击事件应该有四种方式。
+
+### 02. 可见属性 
+
+通过 **android:visibility** 进行指定
+
+* **visible**  可见。
+* **invisible**  不可见，但仍然占据着原来的位置和大小，变成透明状态了。
+* **gone**  不可见，而且不再占用任何屏幕空间。
+
+### 03. 布局
+
+* **LinearLayout**  线性布局
+* **RelativeLayout**  相对布局
+* 帧布局
+* 百分比布局
+
+
+
+### 0x. 小结
+
+1. 屏幕适配相关知识。慕课网 [Android-屏幕适配全攻略](http://www.imooc.com/learn/484)。
+
+2. Android Studio 中的 **drawable-xhdpi** 和 **mipmap-xhdpi** 文件夹的区别及使用。
+
+3. EditText 使用时候**软键盘**的弹起和收起监听。
+
+4. ImageView 使用时候的有三个属性需要注意
+
+   ```java
+   android:src="@mipmap/ic_launcher" 
+   android:background="@mipmap/ic_launcher"
+   android:scaleType="centerCrop"
+   ```
+
+5. ProgressBar 如何修改颜色？
+
+6. LinearLayout 的默认方向是 horizontal
+
+
 
 
 
