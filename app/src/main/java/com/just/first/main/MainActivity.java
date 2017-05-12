@@ -15,6 +15,8 @@ import com.just.first.chapter02.MenuActivity;
 import com.just.first.chapter02.RecoveryActivity;
 import com.just.first.chapter02.StartActivity;
 import com.just.first.chapter03.CommonViewActivity;
+import com.just.first.chapter03.PercentLayoutActivity;
+import com.just.first.chapter03.RelativeLayoutActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,8 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("2.6.2 随时随地退出程序");
     chapterList.add("2.6.3 启动活动的最佳写法");
     chapterList.add("3.2.x 常用控件的使用方法");
+    chapterList.add("3.3.2 相对布局");
+    chapterList.add("3.3.4 百分比布局");
   }
 
   @Override
@@ -85,6 +89,12 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "3.2.x 常用控件的使用方法":
         startActivity(new Intent(this, CommonViewActivity.class));
+        break;
+      case "3.3.2 相对布局":
+        startActivity(new Intent(this, RelativeLayoutActivity.class));
+        break;
+      case "3.3.4 百分比布局":
+        startActivity(new Intent(this, PercentLayoutActivity.class));
         break;
     }
   }

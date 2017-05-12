@@ -22,6 +22,8 @@
     <activity android:name=".chapter02.KillAllActivity" />
     <activity android:name=".chapter02.StartActivity" />
     <activity android:name=".chapter03.CommonViewActivity" />
+    <activity android:name=".chapter03.RelativeLayoutActivity" />
+    <activity android:name=".chapter03.PercentLayoutActivity" />
   </application>
 
 </manifest>

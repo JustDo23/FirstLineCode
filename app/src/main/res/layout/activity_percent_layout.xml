@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <android.support.percent.PercentRelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1">
+
+    <Button
+      android:id="@+id/bt_center"
+      android:layout_centerInParent="true"
+      android:text="Center"
+      android:textAllCaps="false"
+      app:layout_heightPercent="20%"
+      app:layout_marginPercent="5%"
+      app:layout_widthPercent="20%" />
+
+    <Button
+      android:id="@+id/bt_up"
+      android:layout_above="@id/bt_center"
+      android:layout_alignLeft="@id/bt_center"
+      android:text="Up"
+      android:textAllCaps="false"
+      app:layout_heightPercent="20%"
+      app:layout_widthPercent="20%" />
+
+    <Button
+      android:id="@+id/bt_down"
+      android:layout_alignRight="@id/bt_center"
+      android:layout_below="@id/bt_center"
+      android:text="Down"
+      android:textAllCaps="false"
+      app:layout_heightPercent="20%"
+      app:layout_widthPercent="20%" />
+
+    <Button
+      android:id="@+id/bt_left"
+      android:layout_alignTop="@id/bt_center"
+      android:layout_toLeftOf="@id/bt_center"
+      android:text="Left"
+      android:textAllCaps="false"
+      app:layout_heightPercent="20%"
+      app:layout_widthPercent="20%" />
+
+    <Button
+      android:id="@+id/bt_right"
+      android:layout_alignBottom="@id/bt_center"
+      android:layout_toRightOf="@id/bt_center"
+      android:text="Right"
+      android:textAllCaps="false"
+      app:layout_heightPercent="20%"
+      app:layout_widthPercent="20%" />
+
+  </android.support.percent.PercentRelativeLayout>
+
+  <android.support.percent.PercentFrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1">
+
+    <Button
+      android:layout_gravity="top|left"
+      android:text="左上"
+      app:layout_heightPercent="45%"
+      app:layout_widthPercent="45%" />
+
+    <Button
+      android:layout_gravity="top|right"
+      android:text="右上"
+      app:layout_heightPercent="45%"
+      app:layout_widthPercent="45%" />
+
+    <Button
+      android:layout_gravity="bottom|left"
+      android:text="左下"
+      app:layout_heightPercent="45%"
+      app:layout_widthPercent="45%" />
+
+    <Button
+      android:layout_gravity="bottom|right"
+      android:text="右下"
+      app:layout_heightPercent="45%"
+      app:layout_widthPercent="45%" />
+
+  </android.support.percent.PercentFrameLayout>
+
+
+</LinearLayout>
