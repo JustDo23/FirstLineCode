@@ -24,6 +24,8 @@
     <activity android:name=".chapter03.CommonViewActivity" />
     <activity android:name=".chapter03.RelativeLayoutActivity" />
     <activity android:name=".chapter03.PercentLayoutActivity" />
+    <activity android:name=".chapter08.NotificationActivity" />
+    <activity android:name=".chapter08.NotificationAdvancedActivity" />
   </application>
 
 </manifest>
