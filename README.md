@@ -356,9 +356,12 @@ android:textAllCaps="false"
 ### 03. 布局
 
 * **LinearLayout**  线性布局
+  * LinearLayout 的默认方向是 `horizontal`
+  * `android:layout_weight` 属性的计算方法
 * **RelativeLayout**  相对布局
-* 帧布局
-* 百分比布局
+* **FrameLayout**  帧布局
+* **PercentRelativeLayout**    **PercentFrameLayout**  百分比布局
+  * 由于 `LinearLayout` 本身已经支持按比例指定控件的大小，因此百分比布局只为 `RelativeLayout` 和 `FrameLayout` 进行了功能扩展。
 
 
 
@@ -380,7 +383,7 @@ android:textAllCaps="false"
 
 5. ProgressBar 如何修改颜色？
 
-6. LinearLayout 的默认方向是 horizontal
+6. 百分比布局需要更多的学习和使用。
 
 
 
