@@ -364,8 +364,42 @@ android:textAllCaps="false"
   * 由于 `LinearLayout` 本身已经支持按比例指定控件的大小，因此百分比布局只为 `RelativeLayout` 和 `FrameLayout` 进行了功能扩展。
 
 
+### 04. 自定义控件 
 
-### 0x. 小结
+1. 引入布局，使用 `<include>` 标签引入一个已经写好的布局。
+2. **注意：**获取上下文使用 `getContext()` 方法。
+3. **注意：**加载布局使用`LayoutInflater.from(context).inflate(R.layout.inclue_title, this);` **注意：**第二个参数
+4. 最简单的自定义控件，查看代码即可。
+
+### 05. ListView
+
+1. 适配器有多种，简单的使用`ArrayAdapter`。
+2. 掌握使用 `ViewHolder` 进行复用来提升运行效率。
+3. 点击事件的基本使用。
+
+### 06. RecyclerView
+
+1. 注意在使用的时候需要先设置`布局管理器`。
+
+2. 为什么 ListView 很难或者根本无法实现的效果在 RecyclerView 上这么轻松就能实现？这主要得益于 RecyclerView 出色的设计。ListView 的布局排列是由自身去管理的，而 RecyclerView 则将这个工作交给了 LayoutManager，LayoutManager 中制定了一套可扩展的布局排列接口，子类只要按照接口的规范来实现，就能定制出各种不同排列方式的布局了。
+
+3. RecyclerView 并没有提供像样的点击事件，其实，ListView 的在点击事件上的处理并不任性化，`setOnItemCLickListener()`方法注册的是子项的点击事件，但如果想点击的是子项里具体的某一个按钮呢？虽然 ListView 也能做到，但是实现起来就相对比较麻烦了。为此，RecyclerView 干脆直接摒弃了自相点击事件的监听，所有的点击事件都由具体的 View 去注册，就再没有这个困扰了。
+
+   ```
+   int position = viewHolder.getAdapterPosition();
+   ```
+
+### 07. 界面最佳实践
+
+1. 点九图片`Nine-Patch`的相关知识和使用。
+   * 在上边框和左边框绘制的部分表示当图片需要拉伸时就拉伸黑点标记的区域。
+   * 在下边框和有边框绘制的部分表示内容会被放置的区域。
+   * 使用鼠标在图片的边缘拖动就可以进行绘制。
+   * 按住`shift`键拖动可以进行擦除。
+2. `RecycleView`数据更新。
+
+
+### 08. 小结
 
 1. 屏幕适配相关知识。慕课网 [Android-屏幕适配全攻略](http://www.imooc.com/learn/484)。
 
@@ -384,6 +418,10 @@ android:textAllCaps="false"
 5. ProgressBar 如何修改颜色？
 
 6. 百分比布局需要更多的学习和使用。
+
+7. 关于 `RecycleView` 的源码分析可以简单的学习一下。
+
+8. 在 Android sdk 目录下有一个 tools 文件夹，其中的工具可以学习使用一下。
 
 
 
