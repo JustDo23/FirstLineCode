@@ -15,6 +15,7 @@ import com.just.first.chapter02.MenuActivity;
 import com.just.first.chapter02.RecoveryActivity;
 import com.just.first.chapter02.StartActivity;
 import com.just.first.chapter03.CommonViewActivity;
+import com.just.first.chapter03.CustomViewActivity;
 import com.just.first.chapter03.PercentLayoutActivity;
 import com.just.first.chapter03.RelativeLayoutActivity;
 import com.just.first.chapter08.NotificationActivity;
@@ -64,6 +65,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("3.2.x 常用控件的使用方法");
     chapterList.add("3.3.2 相对布局");
     chapterList.add("3.3.4 百分比布局");
+    chapterList.add("3.4.2 创建自定义控件");
+
+    chapterList.add("----------");
 
     chapterList.add("8.2.2 通知的使用方法");
   }
@@ -98,6 +102,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "3.3.4 百分比布局":
         startActivity(new Intent(this, PercentLayoutActivity.class));
+        break;
+      case "3.4.2 创建自定义控件":
+        startActivity(new Intent(this, CustomViewActivity.class));
         break;
 
 

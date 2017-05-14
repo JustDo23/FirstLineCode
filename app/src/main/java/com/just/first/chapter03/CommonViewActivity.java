@@ -2,10 +2,10 @@ package com.just.first.chapter03;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.just.first.R;
+import com.just.first.base.BaseActivity;
 
 /**
  * 3.2.x 常用控件的使用方法
@@ -13,7 +13,7 @@ import com.just.first.R;
  * @author JustDo23
  * @since 2017年05月08日
  */
-public class CommonViewActivity extends AppCompatActivity implements View.OnClickListener {
+public class CommonViewActivity extends BaseActivity implements View.OnClickListener {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
