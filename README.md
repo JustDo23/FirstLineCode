@@ -426,6 +426,32 @@ android:textAllCaps="false"
 
 
 
+## 第 4 章 Fragment
 
+### 01. 基本使用 
+
+1. 使用 **support-v4** 库中的 `Fragment` 作为基类。在 Android 4.2 系统中才开始支持在 Fragment 中嵌套使用 Fragment。
+
+2. 在 `build.gradle` 文件中添加了 **appcompat-v7** 库的依赖，这个库会将 **support-v4** 库也一起引入进来。
+
+3. 在**布局文件**中使用 Fragmet
+
+   ```java
+   <fragment
+     android:id="@+id/frag_left"
+     android:name="com.just.first.chapter04.LeftFragment"
+     android:layout_width="0dp"
+     android:layout_height="match_parent"
+     android:layout_weight="1" />
+   ```
+
+   代码中有两个关键点
+
+   * 标签使用 **<fragment />**
+   * 属性使用 **android:name="name"**  并制定全部路径名称
+
+4. ​
+
+   ​
 
 
