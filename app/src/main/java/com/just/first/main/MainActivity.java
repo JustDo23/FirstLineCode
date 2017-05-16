@@ -20,6 +20,7 @@ import com.just.first.chapter03.CustomViewActivity;
 import com.just.first.chapter03.PercentLayoutActivity;
 import com.just.first.chapter03.RecyclerViewActivity;
 import com.just.first.chapter03.RelativeLayoutActivity;
+import com.just.first.chapter04.SimpleFragmentActivity;
 import com.just.first.chapter08.NotificationActivity;
 
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("3.4.2 创建自定义控件");
     chapterList.add("3.5.1 ListView 的简单用法");
     chapterList.add("3.6.1 RecyclerView 的简单用法");
+    chapterList.add("4.2.1 Fragment 的简单用法");
 
     chapterList.add("----------");
 
@@ -115,6 +117,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "3.6.1 RecyclerView 的简单用法":
         startActivity(new Intent(this, RecyclerViewActivity.class));
+        break;
+      case "4.2.1 Fragment 的简单用法":
+        startActivity(new Intent(this, SimpleFragmentActivity.class));
         break;
 
 
