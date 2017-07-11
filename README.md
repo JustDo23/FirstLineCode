@@ -8,6 +8,8 @@
 >
 > 鼓励：Standing on Shoulders of Giants.
 
+[TOC]
+
 ## 第 1 章 开始启程
 
 ### 01. Android 简史
@@ -20,7 +22,6 @@
 * 2014年 Google I/O 大会发布了 Android 5.0 系统。
 * 2015年 Google I/O 大会发布了 Android 6.0 系统。
 * 2016年 Google I/O 大会发布了 Android 7.0 系统。
-
 
 ### 02. Android 系统架构
 
@@ -214,7 +215,7 @@
      }
    ```
 
-### 02. Intent 
+### 02. Intent
 
 1. 显式 Intent
 
@@ -232,7 +233,27 @@
    * android:path  用于指定**主机名和端口之后**部分。
    * android:mimeType  用于指定**可处理的数据类型**，允许使用**通配符**的方式进行指定。
 
-   只有<data>标签中指定的内容和 Intent 中携带的 Data 完全一致是，当前活动才能够响应该 Intent。
+4. 注意：
+
+   * `android.intent.categore.DEFAULT` 是一种默认的 category 在调用 `startActivity()` 方法的时候会自动将这个 category 添加到 Intent 当中。
+   * 只有`<action>`和`<category>`中的内容同时能够匹配上 Intent 中指定的 action 和 category 时，活动才能响应该 Intent。
+   * 只有`<data>`标签中指定的内容和 Intent 中携带的 Data 完全一致是，当前活动才能够响应该 Intent。
+
+5. 启动浏览器
+
+   ```java
+   Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+   browserIntent.setData(Uri.parse("https://www.baidu.com"));
+   startActivity(browserIntent);
+   ```
+
+6. 启动拨号
+
+   ```java
+   Intent dialIntent = new Intent(Intent.ACTION_DIAL);
+   dialIntent.setData(Uri.parse("tel:10086"));
+   startActivity(dialIntent);
+   ```
 
 ### 03. Activity 的生命周期
 
@@ -242,21 +263,31 @@
 
 2. 活动状态
 
-   1. 运行状态
-   2. 暂停状态
-   3. 停止状态
-   4. 销毁状态
+   1. **运行**状态
+      * 栈顶，可见，可交互
+   2. **暂停**状态
+      * 栈中，可见，不可交互
+   3. **停止**状态
+      * 栈中，不可见，不可交互
+   4. **销毁**状态
+      * 出栈
 
 3. 生命周期函数
 
-   * onCreat() 初始化操作，加载布局，绑定事件等
+   * onCreat()
+     * 初始化操作，加载布局，绑定事件等。
    * onStart()
+     * 活动由不可见变为了可见。
    * onResume()
+     * 活动准备好和用户进行交互。
    * onPause()
-     * 这个方法在系统准备去启动或者恢复另一个活动的时候调用。我们通常会在这个方法中将一些消耗 CPU 的**资源释放掉**，以及**保存一些关键数据**，但这个方法的执行速度一定要快，不然会影响到新的栈顶活动的使用。
+     * 这个方法在系统准备去启动或者恢复另一个活动的时候调用。我们通常会在这个方法中将一些消耗 CPU 的**资源释放掉**，以及**保存一些关键数据**，但这个方法的**执行速度一定要快**，不然会影响到新的栈顶活动的使用。
    * onStop()
-   * onDestroy() 活动被销毁之前调用
+     * 活动完全不可见。如果启动的新活动是一个对话框式的活动，那么 `onPause()` 执行 `onStop()` 不执行。
+   * onDestroy()
+     * 活动被销毁之前调用。
    * onRestart()
+     * 活动由停止状态变为运行状态之前调用。
 
 4. 活动的生存期
 
@@ -264,7 +295,11 @@
    * 可见生存期
    * 前台生存期
 
-### 04. 活动被回收
+### 04. 生命周期图
+
+![Activity_Lifecycle](http://osxmqydw4.bkt.clouddn.com/activity_lifecycle.png)
+
+### 05. 活动被回收
 
 1. 场景：应用中有一个活动 A，用户在活动 A 的基础上启动了活动 B，活动 A 就进入了**停止状态**，这个时候由于**系统内存不足**，将活动 A 回收掉了，然后用户按下 **Back 键**返回活动 A，会出现什么情况？会正常显示活动 A 但**不会**执行活动 A 的 onRestart() 方法，**会**执行 onCreate() 方法将活动 A 重新创建一次。
 
@@ -327,7 +362,7 @@
    * [View的onSaveInstanceState和onRestoreInstanceState过程分析](http://www.cnblogs.com/xiaoweiz/p/3813914.html)
    * [如何保存和恢复 Activity 状态](http://www.epubit.com.cn/book/onlinechapter/14222)
 
-### 05. 启动模式
+### 06. 启动模式
 
 1. 四种启动模式
    * standard
@@ -336,7 +371,7 @@
    * singleInstance
 2. 指定为 singleInstance 模式的活动会启用一个新的返回栈来管理这个活动（其实如果 singTask 模式指定了不同的 **taskAffinity**，也会启动一个新的返回栈）。程序中有一个活动是允许其他程序调用的，则使用此模式。其他三种不能实现是因为每个应用都会有自己的返回栈，同一个活动在不同的返回栈中入栈时必须是创建了新的实例。
 
-### 06. 小结
+### 07. 小结
 
 1. 关于向下兼容的 **AppCompatActivity** 需要学习。
 2. 关于**栈**和**堆**的相关知识需要学习总结。
@@ -352,7 +387,7 @@
 
 
 
-## 第 3 章 View 
+## 第 3 章 View
 
 ### 01. Button
 
@@ -364,7 +399,7 @@ android:textAllCaps="false"
 
 其次，给按钮设置点击事件应该有四种方式。
 
-### 02. 可见属性 
+### 02. 可见属性
 
 通过 **android:visibility** 进行指定
 
@@ -383,7 +418,7 @@ android:textAllCaps="false"
   * 由于 `LinearLayout` 本身已经支持按比例指定控件的大小，因此百分比布局只为 `RelativeLayout` 和 `FrameLayout` 进行了功能扩展。
 
 
-### 04. 自定义控件 
+### 04. 自定义控件
 
 1. 引入布局，使用 `<include>` 标签引入一个已经写好的布局。
 2. **注意：** 获取上下文使用 `getContext()` 方法。
@@ -429,7 +464,7 @@ android:textAllCaps="false"
 4. ImageView 使用时候的有三个属性需要注意
 
    ```java
-   android:src="@mipmap/ic_launcher" 
+   android:src="@mipmap/ic_launcher"
    android:background="@mipmap/ic_launcher"
    android:scaleType="centerCrop"
    ```
@@ -447,7 +482,7 @@ android:textAllCaps="false"
 
 ## 第 4 章 Fragment
 
-### 01. 基本使用 
+### 01. 基本使用
 
 1. 使用 **support-v4** 库中的 `Fragment` 作为基类。在 Android 4.2 系统中才开始支持在 Fragment 中嵌套使用 Fragment。
 
@@ -472,5 +507,16 @@ android:textAllCaps="false"
 4. ​
 
    ​
+
+
+
+
+## 第 13 章 继续进阶
+
+### 01. 创建定时任务
+
+1. 实现方式：
+   * Java API **Timer 类** 并不适合用于那些需要长期在后台运行的定时任务。
+   * Android API **Alarm 机制**
 
 
