@@ -34,22 +34,40 @@
 4. Applications
    * 应用层 各种程序。
 
-### 03. 项目目录结构
+### 03. Android 应用开发特色
+
+1. 四大组件
+   * 活动 Activity
+   * 服务 Service
+   * 广播接收器 Broadcast Receiver
+   * 内容提供器 Content Provider
+2. 控件
+   * 系统控件
+   * 自定义控件
+3. SQLite 数据库
+4. 多媒体
+   * 音乐，视频，录音，拍照，闹铃
+5. 地理位置定位
+6. 其他
+
+### 04. 项目目录结构
 
 1. **gradle**
-   * 目录下包含了 gradle wrapper 的配置文件，使用此方式不需要提前将 gradle 下载好，恩施自动根据本地缓存情况决定是否需要联网下载 gradle。
+   * 目录下包含了 gradle wrapper 的配置文件，使用此方式不需要提前将 gradle 下载好，而是自动根据本地缓存情况决定是否需要联网下载 gradle。
 2. **.gitignore**
    * 配置 Git 的忽略文件。[https://github.com/GitHub/gitignore](https://github.com/GitHub/gitignore)
 3. **gradlew**
    * 在 Linux 系统使用，用于在命令行执行 gradle 命令。
 4. **gradlew.bat**
    * 在 Windows 系统使用，用于在命令行执行 gradle 命令。
-5. **settings.gradle**
+5. ***.iml**
+   * iml 文件是所有 IntelliJ IDEA 项目自动生成，用于标识一个 IntelliJ IDEA 项目。不用修改。
+6. **settings.gradle**
    * 指定项目中所有引入的模块。
-6. **proguard-rules.pro**
+7. **proguard-rules.pro**
    * 指定项目代码的混淆规则。
 
-### 04. 详解 build.gradle 文件
+### 05. 详解 build.gradle 文件
 
 1. Gradle 是一个非常先进的项目构建工具，它使用了一种基于 Groovy 的领域特定语言（DSL）来声明项目设置，摒弃了传统基于 XML（如 Ant 和 Maven）的各种烦琐配置。
 
@@ -95,7 +113,7 @@
      defaultConfig {// 默认配置
        applicationId "com.just.first"// 指定项目包名
        minSdkVersion 14// 最低兼容的 Android 系统版本
-       targetSdkVersion 25// 目标版本
+       targetSdkVersion 25// 目标版本 启用相应版本上的新功能新特性
        versionCode 1// 项目版本号
        versionName "1.0"// 项目版本名称
        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"// 测试需要
@@ -111,7 +129,7 @@
      }
    }
 
-   dependencies {// 依赖库
+   dependencies {// 依赖库 [本地依赖][库依赖][远程依赖]
      compile fileTree(include: ['*.jar'], dir: 'libs')// 本地依赖
      androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
        exclude group: 'com.android.support', module: 'support-annotations'
@@ -127,13 +145,14 @@
    }
    ```
 
-### 05. 小结
+### 06. 小结
 
 1. 关于Dalvik 虚拟机和ART 运行环境相关知识需要学习。
 2. **AndroidManifest.xml** 文件中指定的 **package** 和 **build.gradle** 文件中指定的 **applicationId** 区别。
 3. 创建 Activity 时候系统指定的**模板**及**自定义模板**的学习使用。
 4. 代码混淆相关的知识需要重新学习总结。
-5. 打印日志是否会影响性能和效率？
+5. 资源文件夹 **mipmap** 与 **drawable** 区别。
+6. 打印日志是否会影响性能和效率？
 
 
 

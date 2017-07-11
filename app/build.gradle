@@ -8,7 +8,7 @@ android {
   defaultConfig {// 默认配置
     applicationId "com.just.first"// 指定项目包名
     minSdkVersion 14// 最低兼容的 Android 系统版本
-    targetSdkVersion 25// 目标版本
+    targetSdkVersion 25// 目标版本 启用相应版本上的新功能新特性
     versionCode 1// 项目版本号
     versionName "1.0"// 项目版本名称
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"// 测试需要
@@ -24,7 +24,7 @@ android {
   }
 }
 
-dependencies {// 依赖库
+dependencies {// 依赖库 [本地依赖][库依赖][远程依赖]
   compile fileTree(include: ['*.jar'], dir: 'libs')// 本地依赖
   androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
     exclude group: 'com.android.support', module: 'support-annotations'
