@@ -301,7 +301,7 @@
 
 ### 05. 活动被回收
 
-1. 场景：应用中有一个活动 A，用户在活动 A 的基础上启动了活动 B，活动 A 就进入了**停止状态**，这个时候由于**系统内存不足**，将活动 A 回收掉了，然后用户按下 **Back 键**返回活动 A，会出现什么情况？会正常显示活动 A 但**不会**执行活动 A 的 onRestart() 方法，**会**执行 onCreate() 方法将活动 A 重新创建一次。
+1. 场景：应用中有一个活动 A，用户在活动 A 的基础上启动了活动 B，活动 A 就进入了**停止状态**，这个时候由于**系统内存不足**，将活动 A 回收掉了，然后用户按下 **Back 键**返回活动 A，会出现什么情况？会正常显示活动 A 但**不会**执行活动 A 的 onRestart() 方法，**而是会**执行 onCreate() 方法将活动 A 重新创建一次。
 
    问题：打个比方，活动 A 中有一个文本输入框，用户输入一段文字，然后启动了活动 B，这时候活动 A 被回收了，按下 Back 键返回活动 A，却发现输入的文字全部都没了。数据怎么存储？
 
@@ -371,7 +371,73 @@
    * singleInstance
 2. 指定为 singleInstance 模式的活动会启用一个新的返回栈来管理这个活动（其实如果 singTask 模式指定了不同的 **taskAffinity**，也会启动一个新的返回栈）。程序中有一个活动是允许其他程序调用的，则使用此模式。其他三种不能实现是因为每个应用都会有自己的返回栈，同一个活动在不同的返回栈中入栈时必须是创建了新的实例。
 
-### 07. 小结
+### 07. 活动的实践
+
+1. 获取 Activity 的 Task id
+
+   ```java
+   this.getTaskId();
+   ```
+
+2. 获取 Activity 的名字
+
+   ```java
+   this.getClass().getSimpleName();
+   ```
+
+3. 杀死当前进程
+
+   ```java
+   android.os.Process.killProcess(android.os.Process.myPid());// 删掉当前进程
+   ```
+
+4. 活动管理集合
+
+   ```java
+   public class ActivityCollector {
+
+     public static List<Activity> activityList = new ArrayList<>();
+
+     public static void addActivity(Activity activity) {
+       activityList.add(activity);
+     }
+
+     public static void removeActivity(Activity activity) {
+       activityList.remove(activity);
+     }
+
+     public static void finishAll() {
+       for (Activity activity : activityList) {
+         if (!activity.isFinishing()) {
+           activity.finish();
+         }
+       }
+       activityList.clear();
+       android.os.Process.killProcess(android.os.Process.myPid());// 删掉当前进程
+     }
+
+   }
+   ```
+
+5. 启动活动
+
+   ```java
+   /**
+    * 其他活动启动当前获取
+    *
+    * @param context 上下文
+    * @param data1   传递数据
+    * @param data2   传递数据
+    */
+   public static void actionStart(Context context, String data1, String data2) {
+     Intent intent = new Intent(context, StartActivity.class);
+     intent.putExtra("param1", data1);
+     intent.putExtra("param2", data2);
+     context.startActivity(intent);
+   }
+   ```
+
+### 08. 小结
 
 1. 关于向下兼容的 **AppCompatActivity** 需要学习。
 2. 关于**栈**和**堆**的相关知识需要学习总结。

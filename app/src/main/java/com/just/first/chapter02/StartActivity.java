@@ -26,11 +26,18 @@ public class StartActivity extends BaseActivity {
     ToastUtil.showShortToast(this, "data1 = " + data1 + "\ndata2 = " + data2);
   }
 
-  public static void actionStart(Context context, String data1, String data2) {
-    Intent intent = new Intent(context, StartActivity.class);
-    intent.putExtra("param1", data1);
-    intent.putExtra("param2", data2);
-    context.startActivity(intent);
-  }
+/**
+ * 其他活动启动当前获取
+ *
+ * @param context 上下文
+ * @param data1   传递数据
+ * @param data2   传递数据
+ */
+public static void actionStart(Context context, String data1, String data2) {
+  Intent intent = new Intent(context, StartActivity.class);
+  intent.putExtra("param1", data1);
+  intent.putExtra("param2", data2);
+  context.startActivity(intent);
+}
 
 }
