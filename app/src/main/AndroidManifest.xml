@@ -28,8 +28,22 @@
     <activity android:name=".chapter03.ArrayAdapterActivity" />
     <activity android:name=".chapter03.RecyclerViewActivity" />
     <activity android:name=".chapter04.SimpleFragmentActivity" />
+    <activity android:name=".chapter04.QualifierActivity" />
+    <activity android:name=".chapter04.NewsContentActivity" />
+    <activity android:name=".chapter04.NewsTitleActivity" />
     <activity android:name=".chapter08.NotificationActivity" />
     <activity android:name=".chapter08.NotificationAdvancedActivity" />
+
+
+
+    <activity android:name=".chapter13.AlarmActivity" />
+    <activity android:name=".chapter13.AlarmActivityG" />
+
+    <service android:name=".chapter13.LongRunningService" />
+
+    <receiver android:name=".chapter13.AlarmReceiver" />
+
+
   </application>
 
 </manifest>

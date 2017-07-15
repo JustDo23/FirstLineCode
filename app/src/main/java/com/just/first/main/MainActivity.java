@@ -20,8 +20,11 @@ import com.just.first.chapter03.CustomViewActivity;
 import com.just.first.chapter03.PercentLayoutActivity;
 import com.just.first.chapter03.RecyclerViewActivity;
 import com.just.first.chapter03.RelativeLayoutActivity;
+import com.just.first.chapter04.NewsTitleActivity;
+import com.just.first.chapter04.QualifierActivity;
 import com.just.first.chapter04.SimpleFragmentActivity;
 import com.just.first.chapter08.NotificationActivity;
+import com.just.first.chapter13.AlarmActivityG;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,17 +68,20 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("2.4.5 活动被回收了怎么办");
     chapterList.add("2.6.2 随时随地退出程序");
     chapterList.add("2.6.3 启动活动的最佳写法");
-    chapterList.add("3.2.x 常用控件的使用方法");
+    chapterList.add("3.2.0 常用控件的使用方法");
     chapterList.add("3.3.2 相对布局");
     chapterList.add("3.3.4 百分比布局");
     chapterList.add("3.4.2 创建自定义控件");
     chapterList.add("3.5.1 ListView 的简单用法");
     chapterList.add("3.6.1 RecyclerView 的简单用法");
     chapterList.add("4.2.1 Fragment 的简单用法");
+    chapterList.add("4.4.1 使用限定符");
+    chapterList.add("4.5.1 Fragment 简易新闻");
 
     chapterList.add("----------");
 
     chapterList.add("8.2.2 通知的使用方法");
+    chapterList.add("定时任务 Alarm 机制");
   }
 
   @Override
@@ -100,7 +106,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
       case "2.6.3 启动活动的最佳写法":
         StartActivity.actionStart(this, "JustDo23", "KeepKeep");
         break;
-      case "3.2.x 常用控件的使用方法":
+      case "3.2.0 常用控件的使用方法":
         startActivity(new Intent(this, CommonViewActivity.class));
         break;
       case "3.3.2 相对布局":
@@ -121,10 +127,20 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
       case "4.2.1 Fragment 的简单用法":
         startActivity(new Intent(this, SimpleFragmentActivity.class));
         break;
+      case "4.4.1 使用限定符":
+        startActivity(new Intent(this, QualifierActivity.class));
+        break;
+      case "4.5.1 Fragment 简易新闻":
+        startActivity(new Intent(this, NewsTitleActivity.class));
+        break;
 
 
       case "8.2.2 通知的使用方法":
         startActivity(new Intent(this, NotificationActivity.class));
+        break;
+
+      case "定时任务 Alarm 机制":
+        startActivity(new Intent(this, AlarmActivityG.class));
         break;
     }
   }
