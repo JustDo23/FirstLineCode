@@ -518,7 +518,6 @@ android:textAllCaps="false"
       </android.support.percent.PercentRelativeLayout>
     ```
 
-
 ### 04. ViewGroup 图
 
 ![ViewGroup](http://osxmqydw4.bkt.clouddn.com/viewgroup.png)
@@ -562,7 +561,6 @@ android:textAllCaps="false"
    * 按住`shift`键拖动可以进行擦除。
 2. `RecycleView`数据更新。
 
-
 ### 09. 小结
 
 1. 屏幕适配相关知识。慕课网 [Android-屏幕适配全攻略](http://www.imooc.com/learn/484)。
@@ -595,13 +593,34 @@ android:textAllCaps="false"
 
 ## 第 4 章 Fragment
 
-### 01. 基本使用
+### 01. 碎片
 
-1. 使用 **support-v4** 库中的 `Fragment` 作为基类。在 Android 4.2 系统中才开始支持在 Fragment 中嵌套使用 Fragment。
+1. 碎片是可以嵌入在活动当中的 UI 片段，轻量迷你的活动。
+2. 使用 **support-v4** 库中的 `Fragment` 作为基类。在 Android 4.2 系统中才开始支持在 `Fragment` 中**嵌套**使用 `Fragment`。
+3. 在 `build.gradle` 文件中添加了 **appcompat-v7** 库的依赖，这个库会将 **support-v4** 库也一起引入进来。
 
-2. 在 `build.gradle` 文件中添加了 **appcompat-v7** 库的依赖，这个库会将 **support-v4** 库也一起引入进来。
+### 02. 静态使用
 
-3. 在**布局文件**中使用 Fragmet
+1. 继承并添加布局
+
+   ```java
+   /**
+    * 继承 Fragment 并填充布局
+    *
+    * @author JustDo23
+    */
+   public class LeftFragment extends Fragment {
+
+     @Nullable @Override
+     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {// 简单加载布局
+       View rootView = inflater.inflate(R.layout.fragment_simple_left, container, false);
+       return rootView;
+     }
+
+   }
+   ```
+
+2. 在**布局文件**中使用 `Fragmet`
 
    ```java
    <fragment
@@ -612,14 +631,125 @@ android:textAllCaps="false"
      android:layout_weight="1" />
    ```
 
-   代码中有两个关键点
+   代码关键点
 
-   * 标签使用 **<fragment />**
-   * 属性使用 **android:name="name"**  并制定全部路径名称
+   * 标签使用 **`<fragment />`**
+   * 属性使用 **`android:name="all_name"`**  并制定**全部路径名称**
+   * 属性 **`android:id="frag_id"`** 是**必须要有**的否则会崩溃
 
-4. ​
+### 03. 动态使用
 
-   ​
+1. 布局文件
+
+   ```java
+   <FrameLayout
+     android:id="@+id/fl_bottom"
+     android:layout_width="match_parent"
+     android:layout_height="0dp"
+     android:layout_weight="1"
+     android:background="@android:color/holo_orange_dark" />
+   ```
+
+2. 碎步切换代码
+
+   ```java
+   /**
+    * 切换 Fragment 操作
+    *
+    * @param fragment 新的碎片
+    */
+   private void replaceFragment(Fragment fragment) {
+     FragmentManager supportFragmentManager = this.getSupportFragmentManager();// 获取碎步管理类
+     FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();// 获取碎片管理事务
+     fragmentTransaction.replace(R.id.fl_bottom, fragment);// 进行替换
+     fragmentTransaction.commit();// 事务提交
+   }
+   ```
+
+3. 动态加载碎片5个步骤
+
+   1. 创建待添加的碎步实例
+   2. 通过 `this.getSupportFragmentManager()` 方法获取 `FragmentManager` 实例
+   3. 通过 `fragmentManager.beginTransaction()` 方法开启一个`事务`
+   4. 使用 `fragmentTransaction.replace()` 指定位置及碎片进行动态添加
+   5. 最后通过 `fragmentTransaction.commit()` 方法提交事务以完成动态添加
+
+4. 碎片模拟返回栈
+
+   添加完碎片后按下返回键就直接退出了。在 `commit()` 方法之前执行以下代码来模拟返回栈。
+
+   ```
+   fragmentTransaction.addToBackStack(null);// 字符串参数用于描述返回栈状态
+   ```
+
+### 04. 碎片和活动通信
+
+1. 在 Activity 中通过 `FragmentManager` 获取
+
+   ```java
+   LeftFragment leftFragment = (LeftFragment) getSupportFragmentManager().findFragmentById(R.id.frag_left);
+   ```
+
+2. 在 Fragment 中直接调用 `getActivity();` 方法
+
+   ```java
+   FragmentActivity activity = this.getActivity();
+   ```
+
+### 05. 碎片生命周期
+
+1. 生命周期函数
+   * onAttach()
+     * 当 Fragment 与 Activity 建立关联时候调用
+   * onCreate()
+   * onCreateView()
+     * 为 Fragment 加载布局
+   * onActivityCreated()
+     * 确保与 Fragment 相关联的 Activity 一定已经创建完毕的时候调用
+   * onStart()
+   * onResume()
+   * onPause()
+   * onStop()
+   * onDestroyView()
+     * 当与 Fragment 相关联的视图被移除的时候调用
+   * onDestroy()
+   * onDetach()
+     * 当 Fragment 与 Activity 解除关联的时候调用
+2. 静态加载时 Activity 及 Fragment 生命周期
+3. 动态加载时 Activity 及 Fragment 生命周期
+4. 调用 `addToBackStack` 方法对 Fragment 生命周期的影响
+
+### 06. 碎片生命周期图
+
+![Fragment_Lifecycle](http://osxmqydw4.bkt.clouddn.com/fragment_lifecycle.png)
+
+### 07. 动态加载技巧
+
+1. 使用限定符
+   * 在 **`res`** 目录下创建与 **`layout`** 目录平级的文件夹 **`layout-large`**
+   * 在 **`layout`** 目录`和` **`layout-large`** 目录下创建**同名的布局文件**
+   * 两个布局文件虽然同名但是**布局内容不同**
+   * 分别在**手机**和**平板**上运行才能看到实现的效果
+
+   其中 **`large`** 就是一个**`限定符`**，程序运行在类似平板这种 `large` 屏幕的设备上会自动加载 `layout-large` 目录下的布局。
+
+2. 使用最小宽度限定符
+
+   * 在 **`res`** 目录下创建 **`layout-sw600dp`** 目录
+
+   **最小宽度限定符 Smallest-width Qualifier** 允许我们对屏幕指定一个最小值，以 **dp** 为单位，然后以这个最小值为**临界点**，屏幕宽度大于这个值的设备就加载一个布局，屏幕宽度小于这个值的设备就加载另一个布局。
+
+
+### 08. 小结
+
+1. 关于 `Activity` 与 `Fragment` 之间交互的总结。
+2. 熟练 `Fragment` 的各个生命状态及生命周期。
+3. 注意 `Activity` + `Fragment` 详细的生命周期。
+4. 经常开发手机版应用可以接触一下`平板`开发。
+
+
+
+
 
 
 
