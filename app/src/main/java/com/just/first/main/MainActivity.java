@@ -23,6 +23,9 @@ import com.just.first.chapter03.RelativeLayoutActivity;
 import com.just.first.chapter04.NewsTitleActivity;
 import com.just.first.chapter04.QualifierActivity;
 import com.just.first.chapter04.SimpleFragmentActivity;
+import com.just.first.chapter05.LocalBroadcastActivity;
+import com.just.first.chapter05.NetworkChangeActivity;
+import com.just.first.chapter05.SendBroadcastActivity;
 import com.just.first.chapter08.NotificationActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
@@ -77,6 +80,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("4.2.1 Fragment 的简单用法");
     chapterList.add("4.4.1 使用限定符");
     chapterList.add("4.5.1 Fragment 简易新闻");
+    chapterList.add("5.2.1 动态广播监听网络变化");
+    chapterList.add("5.3.2 发送广播");
+    chapterList.add("5.4.1 本地广播机制");
 
     chapterList.add("----------");
 
@@ -132,6 +138,15 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "4.5.1 Fragment 简易新闻":
         startActivity(new Intent(this, NewsTitleActivity.class));
+        break;
+      case "5.2.1 动态广播监听网络变化":
+        startActivity(new Intent(this, NetworkChangeActivity.class));
+        break;
+      case "5.3.2 发送广播":
+        startActivity(new Intent(this, SendBroadcastActivity.class));
+        break;
+      case "5.4.1 本地广播机制":
+        startActivity(new Intent(this, LocalBroadcastActivity.class));
         break;
 
 

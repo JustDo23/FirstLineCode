@@ -3,6 +3,7 @@ package com.just.first.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 
 import com.just.first.chapter02.ActivityCollector;
 import com.just.first.utils.LogUtils;
@@ -23,6 +24,9 @@ public class BaseActivity extends AppCompatActivity {
     simpleName = getClass().getSimpleName();
     LogUtils.e(simpleName);
     ActivityCollector.addActivity(this);
+    if (!TextUtils.isEmpty(getActionTitle())) {
+      getSupportActionBar().setTitle(getActionTitle());
+    }
   }
 
   @Override
@@ -30,4 +34,14 @@ public class BaseActivity extends AppCompatActivity {
     super.onDestroy();
     ActivityCollector.removeActivity(this);
   }
+
+  /**
+   * 获取 ActionBar 需要显示的标题
+   *
+   * @return 标题
+   */
+  protected String getActionTitle() {
+    return null;
+  }
+
 }

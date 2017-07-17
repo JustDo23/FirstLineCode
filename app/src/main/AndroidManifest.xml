@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.just.first">
 
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
   <application
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
@@ -31,6 +34,9 @@
     <activity android:name=".chapter04.QualifierActivity" />
     <activity android:name=".chapter04.NewsContentActivity" />
     <activity android:name=".chapter04.NewsTitleActivity" />
+    <activity android:name=".chapter05.NetworkChangeActivity" />
+    <activity android:name=".chapter05.SendBroadcastActivity" />
+    <activity android:name=".chapter05.LocalBroadcastActivity" />
     <activity android:name=".chapter08.NotificationActivity" />
     <activity android:name=".chapter08.NotificationAdvancedActivity" />
 
@@ -43,6 +49,22 @@
 
     <receiver android:name=".chapter13.AlarmReceiver" />
 
+    <receiver
+      android:name=".chapter05.BootCompleteReceiver"
+      android:enabled="true"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+      </intent-filter>
+    </receiver>
+    <receiver
+      android:name=".chapter05.CustomReceiver"
+      android:enabled="true"
+      android:exported="true">
+      <intent-filter android:priority="100">
+        <action android:name="com.just.first.CUSTOM" />
+      </intent-filter>
+    </receiver>
 
   </application>
 
