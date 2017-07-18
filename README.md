@@ -751,6 +751,298 @@ android:textAllCaps="false"
 
 
 
+## 第 5 章 广播机制
+
+### 01. 广播机制简介
+
+1. 在**一个 IP 网络范围**中，**最大的 IP 地址**是**被保留**作为**广播地址**来使用的。比如某个网络的 IP 范围是 **`192.168.0.xxxx`** 子网掩码是 **`255.255.255.0`** 那么这个网络的广播地址就是 **`192.168.0.255`** 了。**广播数据包**会被发送到**同一网络**上的**所有端口**，这样在该网络中的每台主机都将会收到这条广播。
+2. 在 Android 中每个应用可以对自己感兴趣的广播进行**注册**，这样该程序就**只会接收**到自己关心的广播。应用可以自由的**发送**和**接收**广播。
+
+### 02. 广播分类
+
+* 标准广播
+  * 一种完全**异步**执行的广播。广播发出后，所有接收器**几乎同时**接收到广播消息，因此**没有先后顺序**，**效率高**，**无法被截断**。
+* 有序广播
+  * 一种**同步**执行的广播。广播发出后，**同一时刻只有一个**接收器接收到广播消息，这个接收器**执行完毕**广播**才会继续传递**，因此**有先后顺序**，**优先级**高的接收器先收到，并且前面的**可以截断**正在传递的广播，这样后面的就无法收到广播消息了。
+
+### 03. 注册广播
+
+* 动态注册
+  * 需要使用 `IntentFilter` 类指定相应的 `action`
+  * `注册`与`解注册`**成对**出现，在`onCreate`中进行注册在`onDestroy`中进行解注册
+* 静态注册
+  * 需要在功能清单中使用 `intent-filter` 及 `action` 标签指定
+  * 注册之后为系统`全局`的广播接收器
+  * 程序进程`运行中`则`可以接收`，程序进程`完成退出`则`无法接收`
+
+### 04. 广播示例代码
+
+1. 动态注册-监听网络变化
+
+   1. 继承 BroadcastReceiver
+
+      ```java
+      /**
+       * 动态广播监听网络变化
+       *
+       * @author JustDo23
+       */
+      public class NetworkChangeReceive extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+          ToastUtil.showShortToast(context, "Network changes.");
+          ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+          NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+          if (networkInfo != null && networkInfo.isAvailable()) {
+            ToastUtil.showShortToast(context, "Network is available.");
+          } else {
+            ToastUtil.showShortToast(context, "Network is unavailable.");
+          }
+        }
+
+      }
+      ```
+
+   2. 在 Activity 中注册与解注册
+
+      ```java
+      /**
+       * 动态广播监听网络变化
+       *
+       * @author JustDo23
+       */
+      public class NetworkChangeActivity extends BaseActivity {
+
+        private IntentFilter intentFilter;
+        private NetworkChangeReceive networkChangeReceive;
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+          super.onCreate(savedInstanceState);
+          setContentView(R.layout.activity_network_change);
+          register();// 注册广播
+        }
+
+        @Override
+        protected void onDestroy() {
+          super.onDestroy();
+          unRegister();// 解注册广播
+        }
+
+        /**
+         * 注册广播
+         */
+        private void register() {
+          intentFilter = new IntentFilter();
+          intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+          networkChangeReceive = new NetworkChangeReceive();
+          this.registerReceiver(networkChangeReceive, intentFilter);
+        }
+
+        /**
+         * 解注册广播
+         */
+        private void unRegister() {
+          unregisterReceiver(networkChangeReceive);
+        }
+
+      }
+      ```
+
+   3. 添加权限
+
+      ```java
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+      ```
+
+2. 静态注册-监听手机开机
+
+   1. 使用 Android Studio 创建广播接收器
+
+      * `右击` 选择 `New` 选择 `Other` 选择 `Broadcast Receiver` 进行命名
+      * 此操作与手动创建一致
+
+   2. 功能清单新增
+
+      ```java
+      <receiver
+        android:name=".chapter05.CustomReceiver"
+        android:enabled="true"
+        android:exported="true">
+      </receiver>
+      ```
+
+      * `enabled` 属性表示是否启用这个广播接收器
+      * `exported` 属性表示是否允许这个广播接收器接收本程序以外的广播
+
+   3. 添加 `<intent-filter>` 标签并指定 `<action>` 标签信息
+
+      ```java
+      <receiver
+        android:name=".chapter05.CustomReceiver"
+        android:enabled="true"
+        android:exported="true">
+        <intent-filter android:priority="100">
+          <action android:name="com.just.first.CUSTOM" />
+        </intent-filter>
+      </receiver>
+      ```
+
+      * `priority` 指定了广播的优先级
+
+   4. 添加权限
+
+      ```java
+      <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+      ```
+
+### 05. 发送自定义广播
+
+1. 发送标准广播
+
+   ```java
+   sendBroadcast(new Intent("com.just.first.CUSTOM"));// Intent 指定 action
+   ```
+
+2. 发送有序广播
+
+   ```java
+   sendOrderedBroadcast(new Intent("com.just.first.CUSTOM"), null);// 第二参数是一个与权限相关的字符串
+   ```
+
+   * 发送有序广播需要指定`优先级`，可以在功能清单中使用 `priority` 指定优先级
+   * 前面的广播可以截断广播的传递，在 `onReceive()` 方法中调用 `abortBroadcast()` 方法截断广播
+
+### 06. 本地广播
+
+前面的广播都属于**系统全局**广播，即发出的广播**可以**被其他任何程序接收到，并且程序**也可以**接收来自其他任何应用的广播。这样存在**安全问题**。Android 引入了一套**本地广播机制**，使用本地广播机制广播**只能**在本应用内部进行**发送**和**接收**。主要是使用了一个 **`LocalBroadcastManager`** 来对广播进行管理。
+
+1. 本地广播注册
+
+   ```java
+     private LocalBroadcastReceiver localBroadcastReceiver;
+     private LocalBroadcastManager localBroadcastManager;
+
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       setContentView(R.layout.activity_local_broadcast);
+
+       localBroadcastManager = LocalBroadcastManager.getInstance(this);// 获取实例
+       IntentFilter intentFilter = new IntentFilter();
+       intentFilter.addAction("com.just.first.LOCAL");
+       localBroadcastReceiver = new LocalBroadcastReceiver();// 实例化接收器
+       localBroadcastManager.registerReceiver(localBroadcastReceiver, intentFilter);// 注册本地广播
+     }
+   ```
+
+2. 本地广播解注册
+
+   ```java
+     @Override
+     protected void onDestroy() {
+       super.onDestroy();
+       localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+     }
+   ```
+
+3. 本地广播发送
+
+   ```java
+     public void sendLocalBroadcast(View view) {
+       Intent intent = new Intent("com.just.first.LOCAL");
+       localBroadcastManager.sendBroadcast(intent);// 发送本地广播
+     }
+   ```
+
+4. 重要提示
+
+   * 本地广播是无法通过静态注册的方式来接收的。
+   * 静态注册主要就是为了让程序在未启动的情况下也能接收到广播。
+
+5. 本地广播优势
+
+   * 可以**明确知道**正在发送的广播**不会离开**我们的程序，不必担心机密**数据泄露**。
+   * 其他程序**无法**将广播发送到我们程序的内部，不必担心有**安全漏洞**隐患。
+   * 发送本地广播比发送系统全局广播更加**高效**。
+
+
+### 07. 重点提示
+
+1. **注意：**开发时**不能**在 `onReceive()` 方法中添加**过多逻辑**或者进行任何的**耗时操作**，因为在广播接收器中**不允许开启线程**的，当 `onReceive()` 方法运行较长时间而没有结束，程序就会出现 **ANR** 错误。
+
+2. 广播是一种可以**跨进程**的`通信`方式，例如我们可以接收系统广播。
+
+3. 在**静态广播接收器**及**本地广播接收器**中是**没有办法**弹出对话框的。
+
+   ```java
+   android.view.WindowManager$BadTokenException: Unable to add window -- token null is not valid; is your activity running?
+   ```
+
+4. 在**动态广播接收器**中是**可以**弹出对话框的。
+
+5. 当在 `BaseActivity` 中注册广播从而使得所有子类都动态注册该广播的操作中，需要将广播的`注册`与`解注册`分别放在生命周期的 `onResume()` 与 `onPause()` 中。这样可以**保障只有**处于**栈顶**的活动才能接收到广播信息。
+
+
+### 08. 初识 Git
+
+1. **Git** 是一个**开源**的**分布式**`版本控制`**工具**。
+
+2. 配置身份
+
+   ```shell
+   $ git config --global user.name "JustDo23"
+   $ git config --global user.email "JustDo_23@163.com"
+   ```
+
+3. 创建代码仓库
+
+   ```shell
+   $ git init
+   ```
+
+4. 添加与提交
+
+   ```shell
+   $ git add .
+   $ git commit -m "describe for commit"
+   ```
+
+### 09. 小结
+
+1. 广播的生命周期简单了解。
+2. 进一步了解广播的工作原理。
+   ​
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
