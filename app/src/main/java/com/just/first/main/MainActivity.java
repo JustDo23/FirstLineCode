@@ -26,6 +26,8 @@ import com.just.first.chapter04.SimpleFragmentActivity;
 import com.just.first.chapter05.LocalBroadcastActivity;
 import com.just.first.chapter05.NetworkChangeActivity;
 import com.just.first.chapter05.SendBroadcastActivity;
+import com.just.first.chapter06.FileStoreActivity;
+import com.just.first.chapter06.SharedPreferencesActivity;
 import com.just.first.chapter08.NotificationActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
@@ -83,6 +85,8 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("5.2.1 动态广播监听网络变化");
     chapterList.add("5.3.2 发送广播");
     chapterList.add("5.4.1 本地广播机制");
+    chapterList.add("6.2.1 文件存储");
+    chapterList.add("6.3.1 SharedPreferences 存储");
 
     chapterList.add("----------");
 
@@ -147,6 +151,12 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "5.4.1 本地广播机制":
         startActivity(new Intent(this, LocalBroadcastActivity.class));
+        break;
+      case "6.2.1 文件存储":
+        startActivity(new Intent(this, FileStoreActivity.class));
+        break;
+      case "6.3.1 SharedPreferences 存储":
+        startActivity(new Intent(this, SharedPreferencesActivity.class));
         break;
 
 

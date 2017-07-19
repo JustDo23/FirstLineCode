@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:padding="16dp">
+
+  <EditText
+    android:id="@+id/et_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="top"
+    android:hint="please input some text."
+    android:minHeight="180dp"
+    android:padding="10dp" />
+
+  <Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:onClick="save"
+    android:text="Save to file"
+    android:textAllCaps="false" />
+
+  <Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:onClick="load"
+    android:text="Load from file"
+    android:textAllCaps="false" />
+
+  <TextView
+    android:id="@+id/tv_content"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:layout_marginTop="10dp"
+    android:hint="Content load from file."
+    android:padding="10dp" />
+
+</LinearLayout>
