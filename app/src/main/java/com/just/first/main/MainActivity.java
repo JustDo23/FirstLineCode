@@ -27,6 +27,7 @@ import com.just.first.chapter05.LocalBroadcastActivity;
 import com.just.first.chapter05.NetworkChangeActivity;
 import com.just.first.chapter05.SendBroadcastActivity;
 import com.just.first.chapter06.FileStoreActivity;
+import com.just.first.chapter06.SQLiteActivity;
 import com.just.first.chapter06.SharedPreferencesActivity;
 import com.just.first.chapter08.NotificationActivity;
 import com.just.first.chapter13.AlarmActivityG;
@@ -87,6 +88,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("5.4.1 本地广播机制");
     chapterList.add("6.2.1 文件存储");
     chapterList.add("6.3.1 SharedPreferences 存储");
+    chapterList.add("6.4.1 SQLite 数据库");
 
     chapterList.add("----------");
 
@@ -157,6 +159,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "6.3.1 SharedPreferences 存储":
         startActivity(new Intent(this, SharedPreferencesActivity.class));
+        break;
+      case "6.4.1 SQLite 数据库":
+        startActivity(new Intent(this, SQLiteActivity.class));
         break;
 
 

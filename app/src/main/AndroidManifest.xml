@@ -39,6 +39,7 @@
     <activity android:name=".chapter05.LocalBroadcastActivity" />
     <activity android:name=".chapter06.FileStoreActivity" />
     <activity android:name=".chapter06.SharedPreferencesActivity" />
+    <activity android:name=".chapter06.SQLiteActivity"/>
     <activity android:name=".chapter08.NotificationActivity" />
     <activity android:name=".chapter08.NotificationAdvancedActivity" />
 
