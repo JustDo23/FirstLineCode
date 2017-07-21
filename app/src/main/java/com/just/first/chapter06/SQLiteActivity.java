@@ -1,6 +1,7 @@
 package com.just.first.chapter06;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.just.first.R;
 import com.just.first.base.BaseActivity;
@@ -20,6 +21,10 @@ public class SQLiteActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_sqlite);
     dao = new BookDao(this);
+  }
+
+  public void insert(View view) {
+    dao.insert();
   }
 
 }

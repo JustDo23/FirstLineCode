@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class BookOpenHelper extends SQLiteOpenHelper {
 
   public BookOpenHelper(Context context) {
-    super(context, "BookStore" + ".db", null, 1);
+    super(context, "BookStore" + ".db", null, 2);
   }
 
   /**
@@ -42,7 +42,13 @@ public class BookOpenHelper extends SQLiteOpenHelper {
         + "pages integer" + ", "
         + "name text"
         + ")";
+    String create_category = "create table Category ( "
+        + "id integer primary key" + ", "
+        + "category_name text" + ", "
+        + "category_code integer"
+        + ")";
     db.execSQL(sql);// 执行 SQL 语句
+    db.execSQL(create_category);
   }
 
   /**
@@ -54,7 +60,9 @@ public class BookOpenHelper extends SQLiteOpenHelper {
    */
   @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+    db.execSQL("drop table if exists Book");
+    db.execSQL("drop table if exists Category");
+    onCreate(db);
   }
 
 }
