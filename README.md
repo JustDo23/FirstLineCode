@@ -1109,7 +1109,7 @@ android:textAllCaps="false"
 
 ### 03. SharedPreferences
 
-1. **`SharedPreferences`** 使用**键值对**的方式存储数据。支持**`多种`**不同的**数据类型**存储。
+1. **`SharedPreferences`** 使用**键值对**的方式存储数据。支持**`多种`**不同的**`数据类型`**存储。
 
 2. 文件存储路径 **`/data/data/主包名/shared_prefs`**
 
@@ -1227,7 +1227,7 @@ android:textAllCaps="false"
 
 3. 数据库文件存储路径 **`/data/data/主包名/databases`**
 
-4. **注意：**SQL 语句中相应位置的空格及分割符很重要
+4. **`注意：`** SQL 语句中相应位置的空格及分割符很重要
 
 5. 数据类型
 
@@ -1467,7 +1467,7 @@ android:textAllCaps="false"
 
    * 通过**任意对象**设置需要更新的值后调用 **`updateAll(String... conditions)`** 方法来更新
    * 第一个参数可以指定**条件约束**，**不指定**代表**更新所有**
-   * **注意：**将某个字段设置为默认值需要调用 **`setToDefault(String fieldName)`** 参数字段名
+   * **`注意：`**将某个字段设置为默认值需要调用 **`setToDefault(String fieldName)`** 参数字段名
 
      ```java
      Book book = new Book();// 实例化实体类
@@ -1478,7 +1478,7 @@ android:textAllCaps="false"
 
 7. 删除数据
 
-   * 通过调用**已存储的对象 **的 **`delete()`** 方法来删除
+   * 通过调用**已存储的对象**的 **`delete()`** 方法来删除
    * 直接使用 **`DataSupport.deleteAll()`** 传递参数进行删除，传递表名及约束，不传则删除所有
 
      ```java
@@ -1509,7 +1509,7 @@ android:textAllCaps="false"
 
      * **`select()`** 方法用于指定查询哪几列的数据
      * **`where()`** 方法用于指定查询的约束条件
-     * **`order()`** 方法用于指定查询结果的排序方式 **`desc`**表示降序 **`asc`**表示升序
+     * **`order()`** 方法用于指定查询结果的排序方式 另 **`desc`** 表示降序 **`asc`** 表示升序
      * **`limit()`** 方法用于指定查询结果的数量
      * **`offset()`** 方法用于指定查询结果偏移量
 
@@ -1518,6 +1518,19 @@ android:textAllCaps="false"
 1. 文件存储核心是 `Java` 中的 **`I/O 流操作`** 因此需要进行复习练习。
 2. 注意 `SharedPreferences` 提交 `apply()` 方法与 `commit()` 方法。
 3. 数据库的原生 API 使用及一些第三方库的使用。
+
+
+
+
+
+## 第 7 章 内容提供器
+
+
+
+
+
+
+
 
 
 
