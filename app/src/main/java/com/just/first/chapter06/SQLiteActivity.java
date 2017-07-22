@@ -27,4 +27,33 @@ public class SQLiteActivity extends BaseActivity {
     dao.insert();
   }
 
+  public void update(View view) {
+    dao.update();
+  }
+
+  public void delete(View view) {
+    dao.delete();
+  }
+
+  public void query(View view) {
+    dao.query();
+  }
+
+
+  public void insertSQL(View view) {
+    dao.insertSQL();
+  }
+
+  public void updateSQL(View view) {
+    dao.updateSQL();
+  }
+
+  public void deleteSQL(View view) {
+    dao.deleteSQL();
+  }
+
+  public void querySQL(View view) {
+    dao.querySQL();
+  }
+
 }

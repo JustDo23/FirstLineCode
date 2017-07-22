@@ -1,15 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:orientation="vertical"
-  android:padding="16dp">
+  android:layout_height="match_parent">
 
-  <Button
+  <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:onClick="insert"
-    android:text="insert"
-    android:textAllCaps="false" />
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-</LinearLayout>
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:onClick="insert"
+      android:text="insert"
+      android:textAllCaps="false" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:onClick="update"
+      android:text="update"
+      android:textAllCaps="false" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:onClick="delete"
+      android:text="delete"
+      android:textAllCaps="false" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:onClick="query"
+      android:text="query"
+      android:textAllCaps="false" />
+
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      android:onClick="insertSQL"
+      android:text="insertSQL"
+      android:textAllCaps="false" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:onClick="updateSQL"
+      android:text="updateSQL"
+      android:textAllCaps="false" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:onClick="deleteSQL"
+      android:text="deleteSQL"
+      android:textAllCaps="false" />
+
+    <Button
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:onClick="querySQL"
+      android:text="querySQL"
+      android:textAllCaps="false" />
+
+  </LinearLayout>
+
+</ScrollView>
