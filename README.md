@@ -1013,32 +1013,511 @@ android:textAllCaps="false"
 
 1. 广播的生命周期简单了解。
 2. 进一步了解广播的工作原理。
-   ​
 
 
 
 
 
+## 第 6 章 数据存储
 
+### 01. 持久化简介
 
+1. **瞬时数据**就是指那些**存储**在**内存**当中，有可能会因为**程序关闭**或其他原因导致**内存被回收**而**丢失**的数据。
+2. **持久化数据**就是指将那些**内存中**的瞬时数据保存到**存储设备**中，保证即使在手机或电脑关机的情况下，这些数据仍然**不会丢失**。
 
+### 02. 文件存储
 
+1. 文件存储**不对**存储的**内容**进行任何的**格式化处理**，所有数据都是**原封不动**地保存到文件当中。因而**比较适合**用于存储一些简单的**文本数据**或**二进制数据**。
 
+2. 通过 `Context` 提供的 `openFileOutput()` 方法将文件存入内部存储路径中。操作模式
 
+   * **`Context.MODE_PRIVATE`** 默认模式私有且覆盖
+   * **`Context.MODE_APPEND`** 模式每次写入数据进行追加
 
+3. 通过 `Context` 提供的 `openFileInput()` 方法用于从文件中进行数据读取。
 
+4. 存数据
 
+   ```java
+   /**
+    * 保存数据到内部存储文件
+    *
+    * @param fileName 文件名称
+    * @param saveData 写入的数据
+    */
+   private void saveToFile(String fileName, String saveData) {
+     FileOutputStream fileOutputStream = null;
+     BufferedWriter bufferedWriter = null;
+     try {
+       fileOutputStream = this.openFileOutput(fileName, Context.MODE_APPEND);// [/data/data/com.just.first/files]
+       bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
+       bufferedWriter.write(saveData);
+     } catch (IOException e) {
+       e.printStackTrace();
+     } finally {
+       try {
+         if (bufferedWriter != null) {
+           bufferedWriter.close();
+         }
+         if (fileOutputStream != null) {
+           fileOutputStream.close();
+         }
+       } catch (IOException e) {
+         e.printStackTrace();
+       }
+     }
+   }
+   ```
 
+5. 取数据
 
+   ```java
+   /**
+    * 从内部存储文件中读取数据
+    *
+    * @param fileName 文件名称
+    * @return 文件内容
+    */
+   private String loadFromFile(String fileName) {
+     FileInputStream fileInputStream = null;
+     BufferedReader bufferedReader = null;
+     StringBuilder dataContent = new StringBuilder();
+     try {
+       fileInputStream = this.openFileInput(fileName);
+       bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+       String line = "";
+       while ((line = bufferedReader.readLine()) != null) {
+         dataContent.append(line);
+       }
+     } catch (IOException e) {
+       e.printStackTrace();
+     } finally {
+       try {
+         if (bufferedReader != null) {
+           bufferedReader.close();
+         }
+         if (fileInputStream != null) {
+           fileInputStream.close();
+         }
+       } catch (IOException e) {
+         e.printStackTrace();
+       }
+     }
+     return dataContent.toString();
+   }
+   ```
 
+### 03. SharedPreferences
 
+1. **`SharedPreferences`** 使用**键值对**的方式存储数据。支持**`多种`**不同的**数据类型**存储。
 
+2. 文件存储路径 **`/data/data/主包名/shared_prefs`**
 
+3. 文件存储的是 **`xml`** 文件。
 
+4. 获取 `sharedPreferences` 实例的三种方法
+   * 通过 `Context` 类的 `getSharedPreferences(String name, int mode)` 方法获取。
+     * 第一个参数文件名称
+     * 第二个参数模式
+   * 通过 `Activity` 类的 `getPreferences(int mode)` 方法获取。
+     * 一个参数模式
+     * 文件名称会自动获取当前活动类名 `getLocalClassName()`
+   * 通过 `PreferenceManager` 类的 `getDefaultSharedPreferences(Context context)` 方法获取。
+     * 一个参数上下文
+     * 文件名称会自动获取当前程序主包名 `context.getPackageName() + "_preferences"`
 
+5. 存储数据需要三个步骤
+   1. 获取 `SharedPreferences.Editor` 对象
+   2. 通过 `Editor` 对象进行数据的添加
+   3. 调用 `Editor` 的 `apply()` 方法进行数据的提交
 
+6. 存数据
 
+   ```java
+   /**
+    * 将数据保存到 SharedPreferences
+    *
+    * @param fileName 文件名
+    * @param keyWord  键
+    * @param saveData 值
+    */
+   private void saveToSharedPreferences(String fileName, String keyWord, String saveData) {
+     SharedPreferences sharedPreferences = this.getSharedPreferences(fileName, MODE_APPEND);
+     SharedPreferences.Editor edit = sharedPreferences.edit();
+     edit.putString(keyWord, saveData);
+     edit.apply();
+   }
+   ```
 
+7. 取数据
+
+   ```java
+   /**
+    * 从 SharedPreferences 加载数据
+    *
+    * @param fileName 文件名
+    * @param keyWord  键
+    * @return 值
+    */
+   private String loadFromSharedPreferences(String fileName, String keyWord) {
+     SharedPreferences sharedPreferences = this.getSharedPreferences(fileName, MODE_APPEND);
+     return sharedPreferences.getString(keyWord, null);// 默认值
+   }
+   ```
+
+8. 数据的**写入**和**读取**均可以根据类型进行操作。
+
+### 04. SQLite 数据库
+
+1. `SQLite` 数据库是一款**轻量级**的**关系型数据库**，运算速度快，占用资源少。支持**标准 SQL 语法**，遵循数据库的 **ACID 事务**。
+
+2. 自定义 `SQLiteOpenHelper` 继承系统 `SQLiteOpenHelper`
+
+   ```java
+   /**
+    * SQLiteOpenHelper 实现数据库创建与升级
+    *
+    * @author JustDo23
+    */
+   public class BookOpenHelper extends SQLiteOpenHelper {
+
+     /**
+      * 构造方法[必须实现]
+      *
+      * @param context 上下文
+      * @param name    数据库名称[带上后缀 .db]
+      * @param factory 工厂[允许数据查询使用自定义 Cursor][一般传 null]
+      * @param version 版本[整型]
+      */
+     public BookOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+       super(context, "BookStore" + ".db", null, 1);
+     }
+
+     /**
+      * 创建数据表方法[必须实现]
+      *
+      * @param db 数据库操作对象
+      */
+     @Override
+     public void onCreate(SQLiteDatabase db) {
+       String sql = "create table Book ( "
+           + "id integer primary key autoincrement" + ", "
+           + "author text" + ", "
+           + "price real" + ", "
+           + "pages integer" + ", "
+           + "name text"
+           + ")";
+       db.execSQL(sql);// 执行 SQL 语句
+     }
+
+     /**
+      * 数据库升级方法[必须实现]
+      *
+      * @param db         数据库操作对象
+      * @param oldVersion 旧的版本号
+      * @param newVersion 新的版本号
+      */
+     @Override
+     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+     }
+
+   }
+   ```
+
+3. 数据库文件存储路径 **`/data/data/主包名/databases`**
+
+4. **注意：**SQL 语句中相应位置的空格及分割符很重要
+
+5. 数据类型
+
+   * **`integer`** 表示**整型**
+   * **`real`** 表示**浮点型**
+   * **`text`** 表示**文本类型**
+   * **`blob`** 表示**二进制类型**
+   * **`primary key`** 表示**主键**
+   * **`autoincrement`** 表示**自增长**
+
+6. 数据库的创建
+
+   * 继承系统 `SQLiteOpenHelper` 并实现相应方法后并**没有**实现数据库的**创建**
+   * 在 `SQLiteOpenHelper` 中有两个重要的方法
+     * `getReadableDatabase()` 获取**读数据**操作的对象
+     * `getWritableDatabase()` 获取**写数据**操作的对象
+     * 这两个方法可以**创建**或**打开**一个数据库。数据库**存在**则直接**打开**，数据库**不存在**则**创建并打开**。
+     * 这两个方法**返回的对象**都**可以**对数据库进行**读写**操作。
+     * 当数据**不可写入**时候如磁盘空间已满，`getReadableDatabase()` 方法将以**只读**方式打开数据库，`getWritableDatabase()` 方法会抛出异常。
+
+7. ADB 调试工具
+
+   * 进入 Shell 内核
+
+     ```shell
+     $ adb shell
+     ```
+
+   * 打开数据库
+
+     ```shell
+     $ sqlite3 BookStore.db
+     ```
+
+   * 查看数据库中的数据表
+
+     ```shell
+     $ .table
+     ```
+
+     * 数据表 `android_metadata` 是每个数据库自动生成的
+
+   * 查看建表语句
+
+     ```shell
+     $ .schema
+     ```
+
+   * 退出
+
+     ```shell
+     $ .exit
+     $ .quit
+     ```
+
+### 05. 数据库操作
+
+1. 升级数据库
+
+   ```java
+   /**
+    * 数据库升级方法
+    */
+   @Override
+   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+     db.execSQL("drop table if exists Book");// 删除原来的表
+     onCreate(db);// 重新进行创建
+   }
+   ```
+
+   * 先将已经存在的数据表进行**删除**，然后**创建**新的表。数据表**不能重复**创建，否则会**崩溃**。
+   * 修改**构造方法**中的数据库**版本号**。
+
+2. 概述
+
+   数据库操作**有 4 种**简称 **`CRUD`**
+
+   * **`C`** 代表 **`Create`** 添加 **` insert`**
+   * **`R`** 代表 **`Retrieve`** 查询 **` select`**
+   * **`U`** 代表 **` Update`** 更新 **` update`**
+   * **`D`** 代表 **`Delete`** 删除 **` delete`**
+
+3. 添加数据
+
+   * 利用 **`SQLiteDatabase`** 对象的 `insert(String table, String nullColumnHack, ContentValues values)` 方法进行数据数据添加
+   * 第一个参数**表名**
+   * 第二个参数用于在**未指定**添加数据的情况下给某些可为空的列**自动赋值 NULL** 一般传入 **null** 即可
+   * 第三个参数数据集合**键值对**关系**键**为**列名**因此**值**为**数据**
+
+     ```java
+     public void insert() {
+       SQLiteDatabase writableDatabase = bookOpenHelper.getWritableDatabase();// 获取数据操作对象
+       ContentValues contentValues = new ContentValues();// 键值对集合
+       contentValues.put("name", "FirstLine");// 列名-数据
+       contentValues.put("author", "Guo");
+       contentValues.put("pages", "570");
+       contentValues.put("price", 79.0);
+       writableDatabase.insert("Book", null, contentValues);// 指定表名添加
+     }
+     ```
+
+   * 数据库的查询语句
+
+     ```shell
+     $ select * from Book;
+     ```
+
+4. 更新数据
+
+   * 利用 **`SQLiteDatabase`** 对象的 `update(String table, ContentValues values, String whereClause, String[] whereArgs)` 方法进行数据数据更新
+   * **后两个**参数用于**约束**更新某一行或者某几行的数据，不指定**默认**更新**所有行**。
+   * **第三个**参数对应 **SQL** 语句的 **where** 部分其中 **`?`** 代表占位符
+   * **第四个**参数按照**先后顺序**对应为**占位符**进行**赋值**
+
+     ```java
+     public void update() {
+       SQLiteDatabase writableDatabase = bookOpenHelper.getWritableDatabase();// 获取数据操作对象
+       ContentValues contentValues = new ContentValues();// 键值对集合
+       contentValues.put("price", 99.9);
+       writableDatabase.update("Book", contentValues, "name = ?", new String[]{"FirstLine"});
+     }
+     ```
+
+5. 删除数据
+
+   * 利用 **`SQLiteDatabase`** 对象的 `delete(String table, String whereClause, String[] whereArgs)` 方法进行数据数据删除
+
+     ```java
+     public void delete() {
+       SQLiteDatabase writableDatabase = bookOpenHelper.getWritableDatabase();// 获取数据操作对象
+       writableDatabase.delete("Book", "name = ?", new String[]{"FirstLine"});
+     }
+     ```
+
+6. 查询数据
+
+   * **`SQL`** 的全称是 **`Structured Query Language`** 即 **`结构化查询语言`**
+   * 利用 **`SQLiteDatabase`** 对象的 `query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy)` 方法进行数据数据查询
+   * `query()` 重载函数比较多功能与 SQL 语句中的查询类似
+
+     | query方法参数     | 对应 SQL 部分                 | 描述                   |
+     | ------------- | ------------------------- | -------------------- |
+     | table         | from table_name           | 指定查询的表名              |
+     | columns       | select column1, column2   | 指定查询的列名              |
+     | selection     | where column = value      | 指定 where 的约束条件       |
+     | selectionArgs | -                         | 为 where 中的占位符提供具体的值  |
+     | groupBy       | group by column           | 指定需要 group by 的列     |
+     | having        | having column = value     | 对 group by 后的结果进一步约束 |
+     | orderBy       | order by column1, column2 | 指定查询结果的排序方式          |
+
+   * 不需要的参数可以指定为 **null**
+
+     ```java
+     public void query() {
+       SQLiteDatabase readableDatabase = bookOpenHelper.getReadableDatabase();// 获取数据操作对象
+       Cursor cursor = readableDatabase.query("Book", null, null, null, null, null, null);// 查询获得游标
+       if (cursor.moveToFirst()) {// 是否可以移动位置
+         do {
+           String author = cursor.getString(cursor.getColumnIndex("author"));
+           String name = cursor.getString(cursor.getColumnIndex("name"));
+           String pages = cursor.getString(cursor.getColumnIndex("pages"));
+           String price = cursor.getString(cursor.getColumnIndex("price"));
+           LogUtils.e("Book: " + author + " -- " + name + " -- " + pages + " -- " + price);
+         } while (cursor.moveToNext());// 是否可以继续往下移动
+       }
+     }
+     ```
+
+7. 使用 SQL 语句
+
+   * 添加数据
+
+     ```java
+     writableDatabase.execSQL("insert into Book (name, author, pages, price) values (?, ?, ?, ?)", new String[]{"SecondLine", "Lin", "123", "66.6"});writableDatabase.execSQL("insert into Book (name, author, pages, price) values (?, ?, ?, ?)", new String[]{"SecondLine", "Lin", "123", "66.6"});
+     ```
+
+   * 更新数据
+
+     ```java
+     writableDatabase.execSQL("update Book set pages = ? where author = ?", new String[]{"333", "Lin"});writableDatabase.execSQL("update Book set pages = ? where author = ?", new String[]{"333", "Lin"});
+     ```
+
+   * 删除数据
+
+     ```java
+     writableDatabase.execSQL("delete from Book where pages > ?", new String[]{"10"});
+     ```
+
+   * 查询数据
+
+     ```java
+     readableDatabase.rawQuery("select * from Book", null);// 查询获得游标
+     ```
+
+### 06. LitePal 数据库
+
+1. **LitePal** 采用了**对象关系映射 ORM **的模式。简单说，我们使用的编程语言是**面向对象语言**，而使用的数据库则是**关系型数据库**，那么将面向对象的语言和面向关系的数据库之间**建立一种映射关系**，这就是**对象关系映射**了。因此，可以用面向对象的思维来操作数据库，而不用再和 SQL 语句打交道。
+
+2. GitHub 链接[https://github.com/LitePalFramework/LitePal](https://github.com/LitePalFramework/LitePal)
+
+3. 使用步骤
+
+   1. 添加**依赖**
+   2. 创建 **`assets`** 文件夹
+   3. 创建 **`litepal.xml`** 配置文件
+   4. 在 **`Application`** 中进行**初始化**
+   5. 创建**实体类**也就是**表结构**
+   6. 配置 **`litepal.xml`** 文件
+
+4. 创建数据库
+
+   ```java
+   LitePal.getDatabase();// 使用 LitePal 创建数据库
+   ```
+
+5. 添加数据
+
+   * 实体类需要要继承 **`DataSupport`** 类
+   * 直接调用实体类的 **`save()`** 方法
+
+     ```java
+     Book book = new Book();// 实例化实体类
+     book.save();// 使用 LitePal 插入数据
+     ```
+
+6. 更新数据
+
+   * 通过对**已存储的对象**重新设值后重新调用 **`save()`** 方法来更新。
+   * 调用 `model.isSaved()` 方法返回 `true` 则表示**已存储的对象**。一种是调用过 `save()` 方法的对象，一种是通过 `LitePal` 的 `查询 API` 得到的对象。
+
+     ```java
+     Book book = new Book();// 实例化实体类
+     book.save();// 使用 LitePal 插入数据
+     book.setPages("324");// 更新数据
+     book.save();// 对插入的数据进行更新
+     ```
+
+   * 通过**任意对象**设置需要更新的值后调用 **`updateAll(String... conditions)`** 方法来更新
+   * 第一个参数可以指定**条件约束**，**不指定**代表**更新所有**
+   * **注意：**将某个字段设置为默认值需要调用 **`setToDefault(String fieldName)`** 参数字段名
+
+     ```java
+     Book book = new Book();// 实例化实体类
+     book.setPages("776");// 更新数据
+     book.setToDefault("price");// 设置默认值
+     book.updateAll("name = ? and pages = ?", "老人与海", "76");
+     ```
+
+7. 删除数据
+
+   * 通过调用**已存储的对象 **的 **`delete()`** 方法来删除
+   * 直接使用 **`DataSupport.deleteAll()`** 传递参数进行删除，传递表名及约束，不传则删除所有
+
+     ```java
+     DataSupport.deleteAll(Book.class, "pages < ?", "400");// 指定表名及约束进行删除
+     ```
+
+8. 查询数据
+
+   * 直接使用 **`DataSupport`** 类中的相关方法进行查询
+   * 查询所有
+
+     ```java
+     DataSupport.findAll(Book.class);// 查询所有
+     DataSupport.findFirst(Book.class);// 查询第一条
+     DataSupport.findLast(Book.class);// 查询最后一条
+     ```
+
+   * 更多查询功能
+
+     ```java
+     DataSupport.select("name", "author", "pages")// 指定查询的列
+         .where("pages > ?", "400")// 指定查询的约束条件
+         .order("pages desc")// 指定查询结果排序
+         .limit(10)// 指定查询结果数量
+         .offset(2)// 指定查询结果偏移-抛弃前2条
+         .find(Book.class);// 指定查询的表名
+     ```
+
+     * **`select()`** 方法用于指定查询哪几列的数据
+     * **`where()`** 方法用于指定查询的约束条件
+     * **`order()`** 方法用于指定查询结果的排序方式 **`desc`**表示降序 **`asc`**表示升序
+     * **`limit()`** 方法用于指定查询结果的数量
+     * **`offset()`** 方法用于指定查询结果偏移量
+
+### 07. 小结
+
+1. 文件存储核心是 `Java` 中的 **`I/O 流操作`** 因此需要进行复习练习。
+2. 注意 `SharedPreferences` 提交 `apply()` 方法与 `commit()` 方法。
+3. 数据库的原生 API 使用及一些第三方库的使用。
 
 
 
