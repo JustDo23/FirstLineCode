@@ -30,6 +30,8 @@ import com.just.first.chapter06.FileStoreActivity;
 import com.just.first.chapter06.LitePalActivity;
 import com.just.first.chapter06.SQLiteActivity;
 import com.just.first.chapter06.SharedPreferencesActivity;
+import com.just.first.chapter07.ContactsActivity;
+import com.just.first.chapter07.RunTimePermissionActivity;
 import com.just.first.chapter08.NotificationActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
@@ -91,6 +93,8 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("6.3.1 SharedPreferences 存储");
     chapterList.add("6.4.1 SQLite 数据库");
     chapterList.add("6.5.3 LitePal 数据库操作");
+    chapterList.add("7.2.2 运行时申请权限");
+    chapterList.add("7.3.2 读取系统联系人");
 
     chapterList.add("----------");
 
@@ -167,6 +171,12 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "6.5.3 LitePal 数据库操作":
         startActivity(new Intent(this, LitePalActivity.class));
+        break;
+      case "7.2.2 运行时申请权限":
+        startActivity(new Intent(this, RunTimePermissionActivity.class));
+        break;
+      case "7.3.2 读取系统联系人":
+        startActivity(new Intent(this, ContactsActivity.class));
         break;
 
 

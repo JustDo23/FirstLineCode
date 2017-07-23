@@ -4,6 +4,8 @@
 
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  <uses-permission android:name="android.permission.CALL_PHONE" />
+  <uses-permission android:name="android.permission.READ_CONTACTS" />
 
   <application
     android:name=".application.FirstLineApplication"
@@ -42,6 +44,8 @@
     <activity android:name=".chapter06.SharedPreferencesActivity" />
     <activity android:name=".chapter06.SQLiteActivity" />
     <activity android:name=".chapter06.LitePalActivity" />
+    <activity android:name=".chapter07.RunTimePermissionActivity" />
+    <activity android:name=".chapter07.ContactsActivity" />
     <activity android:name=".chapter08.NotificationActivity" />
     <activity android:name=".chapter08.NotificationAdvancedActivity" />
 
