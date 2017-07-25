@@ -1518,6 +1518,7 @@ android:textAllCaps="false"
 1. 文件存储核心是 `Java` 中的 **`I/O 流操作`** 因此需要进行复习练习。
 2. 注意 `SharedPreferences` 提交 `apply()` 方法与 `commit()` 方法。
 3. 数据库的原生 API 使用及一些第三方库的使用。
+4. 数据库操作对象及游标对象等在使用结束后一定要进行关闭。
 
 
 
@@ -1525,9 +1526,370 @@ android:textAllCaps="false"
 
 ## 第 7 章 内容提供器
 
+### 01. 内容提供器简介
 
+1. **跨程序共享数据**，内容提供器 **Content Provider** 主要用于在**不同**的应用**程序**之间是实现**数据共享**功能。它提供了一套**完整的机制**，允许一个程序**访问**另一个程序中的数据，同时还能保证**被访问**数据的**安全性**。
+2. 内容提供器可以**选择**只对**哪一部分**数据进行**共享**，从而保证我们程序中的**隐私数据**不会有泄漏的风险。
 
+### 02. 运行时权限
 
+1. `Android 6.0 以下`版本**安装时**授权，不授权**不安装**。可在应用管理界面**查看**权限**申请情况**。
+
+2. `Android 6.0 及以上`版本**运行时**授权，不授权**部分功能不能用**。可在应用管理界面**管理**权限**授权或不授权**。
+
+3. 权限分类
+
+   * 普通权限
+   * 危险权限
+   * 特殊权限
+
+4. 每个危险权限都属于一个**权限组**，申请的**某个权限被授权**时，**该组所有权限**也会同时被授权。
+
+5. 请求权限核心方法
+
+   * **`ContextCompat.checkSelfPermission(@NonNull Context context, @NonNull String permission)`** 检查是否有权限
+
+   * **`ActivityCompat.requestPermissions(Activity activity, String[] permissions, int requestCode)`** 请求权限
+
+   * **`onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)`** 权限请求结果的回调
+
+     ```java
+     /**
+      * 点击按钮执行操作
+      */
+     public void request(View view) {
+       if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {// 判断没有权限
+         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, 1);// 请求权限[上下文][权限数组集合][请求码]
+         return;
+       } else {// 判断有权限
+         callPhone();
+       }
+     }
+
+     /**
+      * 请求权限用户操作后回调函数
+      *
+      * @param requestCode  请求码
+      * @param permissions  权限数组集合
+      * @param grantResults 授权情况数组集合
+      */
+     @Override
+     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+       switch (requestCode) {
+         case 1:
+           if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+             callPhone();
+           } else {
+             ToastUtil.showShortToast(this, "You denied the permission");
+           }
+           break;
+       }
+     }
+     ```
+
+### 03. 访问其他程序的数据
+
+1. 读取系统联系人
+
+   ```java
+   private void readContacts() {
+     Cursor cursor = null;// 游标对象
+     try {
+       cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+       if (cursor != null) {
+         while (cursor.moveToNext()) {// 循环读取数据
+           String displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));// 姓名
+           String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));// 手机号
+         }
+       }
+     } catch (Exception e) {
+       e.printStackTrace();
+     } finally {
+       if (cursor != null) {
+         cursor.close();// 关闭游标
+       }
+     }
+   }
+   ```
+
+2. **ContentResolver** 的基本用法
+
+   1. 通过 `Context` 中的 `getContentResolver()` 方法获取到 `ContentResolver` 的实例。
+
+   2. 利用 `ContentResolver` 实例进行数据的 `CRUD` 操作
+
+      * `insert()` 方法进行`添加`数据
+      * `update()` 方法进行`更新`数据
+      * `delete()` 方法进行`删除`数据
+      * `query()` 方法进行`查询`数据
+
+   3. `不同于` SQLite 的是方法都不接收表名参数，而是使用一个 **`Uri`** 参数代替。
+
+   4. 内容 URI 给内容提供器中的数据建立了**唯一标识符**，主要由两部分组成：`authority` 和 `path`
+
+      * `authority` 用于对不同的应用程序做区分，采用包名进行命名
+
+      * `path` 则是用于对同一应用不同表名进行区分，添加在 `authority` 之后
+
+      * `schema` 协议添加于头部
+
+        ```java
+        String uriString = "content://com.just.first/table";
+        Uri uri = Uri.parse(uriString);
+        ```
+
+   5. 查询数据
+
+      ```java
+      Cursor cursor = getContentResolver().query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+      ```
+
+      * 查询返回 `Cursor` 对象
+
+      | query() 方法参数  | 对应 SQL 部分                 | 描述                  |
+      | ------------- | ------------------------- | ------------------- |
+      | uri           | from table_name           | 指定查询某应用程序的某张表       |
+      | projection    | select column1, column2   | 指定查询的列名             |
+      | selection     | where column = value      | 指定 where 的约束条件      |
+      | selectionArgs | -                         | 为 where 中的占位符提供具体的值 |
+      | sortOrder     | order by column1, column2 | 指定查询结果的排序方式         |
+
+   6. 添加数据
+
+      ```java
+      getContentResolver().insert(Uri url, ContentValues values);
+      ```
+
+      * 同样使用 `ContentValues` 键值对进行数据的封装
+
+   7. 修改数据
+
+      ```java
+      getContentResolver().update(Uri uri, ContentValues values, String where, String[] selectionArgs)
+      ```
+
+   8. 删除数据
+
+      ```java
+      getContentResolver().delete(Uri uri, ContentValues values, String where, String[] selectionArgs)
+      ```
+
+### 04. 创建自己的内容提供器
+
+1. 自定义内容提供器继承 `ContentProvider`
+
+2. 实现 6 个抽象方法
+
+   ```java
+   /**
+    * 7.4.1 自定义内容提供器
+    *
+    * @author JustDo23
+    */
+   public class FirstContentProvider extends ContentProvider {
+
+     /**
+      * 初始化内容提供器。完成数据库的创建和升级操作。[只有当存在 ContentResolver 尝试访问时才会初始化]
+      *
+      * @return [true, 初始化成功][false,初始化失败]
+      */
+     @Override
+     public boolean onCreate() {
+       return false;
+     }
+
+     /**
+      * 从内容提供器查询数据。
+      *
+      * @param uri           指定查询哪张表
+      * @param projection    确定查询哪些列
+      * @param selection     约束查询哪些行
+      * @param selectionArgs 为约束赋值
+      * @param sortOrder     查询结果排序
+      * @return 游标对象
+      */
+     @Nullable
+     @Override
+     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+       return null;
+     }
+
+     /**
+      * 向内容提供器中添加数据。
+      *
+      * @param uri    指定哪张表
+      * @param values 待添加数据键值对
+      * @return 返回一个用户表示这条新纪录的 URI
+      */
+     @Nullable
+     @Override
+     public Uri insert(Uri uri, ContentValues values) {
+       return null;
+     }
+
+     /**
+      * 更新内容提供器中已有数据。
+      *
+      * @param uri           指定哪张表
+      * @param values        待更新数据键值对
+      * @param selection     约束更新哪些行
+      * @param selectionArgs 为约束赋值
+      * @return 返回受影响的行数
+      */
+     @Override
+     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+       return 0;
+     }
+
+     /**
+      * 从内容提供器中删除数据。
+      *
+      * @param uri           指定哪张表
+      * @param selection     约束删除哪些行
+      * @param selectionArgs 为约束赋值
+      * @return 返回被删除的行数
+      */
+     @Override
+     public int delete(Uri uri, String selection, String[] selectionArgs) {
+       return 0;
+     }
+
+     /**
+      * 返回 MIME 类型
+      *
+      * @param uri 指定哪张表
+      * @return 返回 MIME 类型
+      */
+     @Nullable
+     @Override
+     public String getType(Uri uri) {
+       return null;
+     }
+
+   }
+   ```
+
+3. 通配符
+
+   一个标准的内容 URI 写法
+
+   ```java
+   content://com.just.first/table
+   ```
+
+   表示访问应用 `com.just.first` 中的 `table` 数据表。还可以在其后添加一个 `id`
+
+   ```java
+   content://com.just.first/table/23
+   ```
+
+   表示访问表中 `id` 为 `23` 的数据。
+
+   `内容 URI` 的格式主要有以上**两种**，以**路径结尾**就表示期望访问**该表**中的**所有**数据，以 **id** 结尾就表示期望访问**该表**中拥有相应 id 的数据。可以使用**通配符**来分别匹配这两种格式的内容 URI。
+
+   * **星号**表示**匹配任意长度的任意字符**
+   * **井号**表示**匹配任意长度的数字**
+
+   一个能够**匹配任意表**的内容 URI 格式可以写成
+
+   ```java
+   content://com.just.first/*
+   ```
+
+   一个能够**匹配表中任意一行数据**的内容 URI 格式可以写成
+
+   ```java
+   content://com.just.first/table/#
+   ```
+
+4. 通配符使用
+
+   ```java
+   public class FirstContentProvider extends ContentProvider {
+
+     public static final int TABLE_1_DIR = 0;// 自定义码
+     public static final int TABLE_1_ITEM = 1;
+     public static final int TABLE_2_DIR = 2;
+     public static final int TABLE_2_ITEM = 3;
+
+     public static UriMatcher uriMatcher;// 用于匹配的对象
+     public static final String PACKAGE_NAME = "com.just.first";// 主包名
+
+     static {// 静态代码块
+       uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);// 用于匹配的对象
+       uriMatcher.addURI(PACKAGE_NAME, "table1", TABLE_1_DIR);// 添加路径
+       uriMatcher.addURI(PACKAGE_NAME, "table1/#", TABLE_1_ITEM);// 可以使用通配符
+       uriMatcher.addURI(PACKAGE_NAME, "table2", TABLE_2_DIR);
+       uriMatcher.addURI(PACKAGE_NAME, "table2/#", TABLE_2_ITEM);
+     }
+
+     @Override
+     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+       switch (uriMatcher.match(uri)) {// 进行匹配并返回相应的自定义码
+         case TABLE_1_DIR:
+           LogUtils.e("查询 table1 表中的所有数据");
+           break;
+         case TABLE_1_ITEM:
+           LogUtils.e("查询 table1 表中的单条数据");
+           break;
+         case TABLE_2_DIR:
+           LogUtils.e("查询 table2 表中的所有数据");
+           break;
+         case TABLE_2_ITEM:
+           LogUtils.e("查询 table2 表中的单条数据");
+           break;
+       }
+       return null;
+     }
+
+   }
+   ```
+
+5. 关于类型
+
+   1. `getType()` 方法是所有内容提供器必须提供的一个方法，用于获取相应的 **MIME** 类型。
+
+   2. 一个内容 URI 所对应的 `MIME` 字符串主要由 **3** 部分组成
+
+      * `必须`以 **vnd** 开头
+      * 如果 URI 以`路径`结尾则后接 `android.cursor.dir/`
+      * 如果 URI 以 `id` 结尾则后接 `android.cursor.item/`
+      * 最后接上 `vnd.<authority>.<path>`
+
+      **内容 URI**
+
+      ```java
+      content://com.just.first/table
+      ```
+
+      **返回 MIME 类型**
+
+      ```java
+      vnd.android.cursor.dir/vnd.com.just.first.table
+      ```
+
+      **内容 URI**
+
+      ```java
+      content://com.just.first/table/23
+      ```
+
+      **返回 MIME 类型**
+
+      ```java
+      vnd.android.cursor.item/vnd.com.just.first.table
+      ```
+
+   3. 根据以上内容重写 `getType()` 方法
+
+6. 数据安全问题
+
+   **因为**所有的 **CRUD** 操作都**一定**要**匹配**到相应的内容 **URI** 格式才能进行，而我们当然**不可能**向 UriMatcher 中添加**隐私数据**的 URI，所以这部分数据根本**无法**被外部程序访问到，安全问题也就不存在了。
+
+### 05. 实现跨程序数据共享
+
+1. 跨进程访问时不能直接使用 **Toast**
+2. ​
 
 
 
