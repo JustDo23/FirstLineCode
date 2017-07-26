@@ -75,6 +75,11 @@
       </intent-filter>
     </receiver>
 
+    <provider
+      android:name=".chapter07.DataBaseProvider"
+      android:authorities="com.just.first.provider"
+      android:enabled="true"
+      android:exported="true" />
   </application>
 
 </manifest>
