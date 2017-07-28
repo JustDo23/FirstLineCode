@@ -1889,8 +1889,80 @@ android:textAllCaps="false"
 ### 05. 实现跨程序数据共享
 
 1. 跨进程访问时不能直接使用 **Toast**
-2. ​
 
+2. 使用内容提供器需要进行注册
+
+   ```java
+   <provider
+         android:name=".chapter07.DataBaseProvider"
+         android:authorities="com.just.first.provider"
+         android:enabled="true"
+         android:exported="true" />
+   ```
+
+### 06. 进阶 Git
+
+1. 忽略文件
+
+   项目目录下 `.gitignore` 是忽略文件，允许用户将指定的文件排除在版本控制之外。
+
+2. 查看状态
+
+   ```shell
+   $ git status
+   ```
+
+3. 查看修改内容
+
+   ```shell
+   $ git diff
+   ```
+
+   其后可以指定文件来查看该文件的更改记录
+
+   * **加号**代表**新增**
+   * **减号**代表**删除**
+
+4. 撤销未添加的修改
+
+   ```shell
+   $ git checkout fileName
+   ```
+
+   * 前提是还没有执行 `add` 命令
+
+5. 撤销未提交的修改
+
+   ```shell
+   $ git reset HEAD
+   ```
+
+   * 前提是执行了 `add` 命令但还没有执行 `commit` 命令
+
+6.  查看提交记录
+
+   ```shell
+   $ git log
+   ```
+
+   * 提交记录包含 `提交 id` 及 `提交人` 及 `提交日期` 及 `提交描述` 这4个信息
+
+   ```shell
+   $ git log id -l
+   ```
+
+   * 命令后为 `提交 id` 及 `小写-L` 查看该 ID 的记录
+
+   ```shell
+   $ git log id -l -p
+   ```
+
+   * 查看该 ID 的修改内容
+
+### 07. 小结
+
+1. 运行时权限
+2. 内容提供者
 
 
 
