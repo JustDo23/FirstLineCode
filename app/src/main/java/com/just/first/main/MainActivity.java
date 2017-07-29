@@ -95,10 +95,10 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("6.5.3 LitePal 数据库操作");
     chapterList.add("7.2.2 运行时申请权限");
     chapterList.add("7.3.2 读取系统联系人");
+    chapterList.add("8.2.2 通知的使用方法");
 
     chapterList.add("----------");
 
-    chapterList.add("8.2.2 通知的使用方法");
     chapterList.add("定时任务 Alarm 机制");
   }
 
@@ -178,8 +178,6 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
       case "7.3.2 读取系统联系人":
         startActivity(new Intent(this, ContactsActivity.class));
         break;
-
-
       case "8.2.2 通知的使用方法":
         startActivity(new Intent(this, NotificationActivity.class));
         break;

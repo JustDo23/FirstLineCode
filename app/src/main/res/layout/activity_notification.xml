@@ -12,4 +12,12 @@
     android:text="Notification Simple"
     android:textAllCaps="false" />
 
+  <Button
+    android:id="@+id/bt_notification_advanced"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:text="Notification Advanced"
+    android:textAllCaps="false" />
+
 </LinearLayout>
