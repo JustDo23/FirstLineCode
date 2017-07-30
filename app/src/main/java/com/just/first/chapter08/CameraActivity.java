@@ -22,7 +22,7 @@ import java.io.IOException;
  * 8.3.1 调用摄像头拍照
  *
  * @author JustDo23
- * @since 2017年05月12日
+ * @since 2017年07月29日
  */
 public class CameraActivity extends BaseActivity {
 

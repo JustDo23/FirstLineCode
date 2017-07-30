@@ -51,6 +51,7 @@
     <activity android:name=".chapter07.ContactsActivity" />
     <activity android:name=".chapter08.NotificationActivity" />
     <activity android:name=".chapter08.CameraActivity" />
+    <activity android:name=".chapter08.AlbumActivity" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 
