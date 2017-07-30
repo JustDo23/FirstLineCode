@@ -6,6 +6,9 @@
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
   <uses-permission android:name="android.permission.CALL_PHONE" />
   <uses-permission android:name="android.permission.READ_CONTACTS" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
   <application
     android:name=".application.FirstLineApplication"
@@ -47,10 +50,7 @@
     <activity android:name=".chapter07.RunTimePermissionActivity" />
     <activity android:name=".chapter07.ContactsActivity" />
     <activity android:name=".chapter08.NotificationActivity" />
-    <activity android:name=".chapter08.NotificationAdvancedActivity" />
-
-
-
+    <activity android:name=".chapter08.CameraActivity" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 
@@ -80,6 +80,18 @@
       android:authorities="com.just.first.provider"
       android:enabled="true"
       android:exported="true" />
+
+    <!-- Android 7.0 -->
+    <provider
+      android:name="android.support.v4.content.FileProvider"
+      android:authorities="com.just.first.fileprovider"
+      android:exported="false"
+      android:grantUriPermissions="true">
+      <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths" />
+    </provider>
+
   </application>
 
 </manifest>

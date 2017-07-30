@@ -32,6 +32,7 @@ import com.just.first.chapter06.SQLiteActivity;
 import com.just.first.chapter06.SharedPreferencesActivity;
 import com.just.first.chapter07.ContactsActivity;
 import com.just.first.chapter07.RunTimePermissionActivity;
+import com.just.first.chapter08.CameraActivity;
 import com.just.first.chapter08.NotificationActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
@@ -96,6 +97,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("7.2.2 运行时申请权限");
     chapterList.add("7.3.2 读取系统联系人");
     chapterList.add("8.2.2 通知的使用方法");
+    chapterList.add("8.3.1 调用摄像头拍照");
 
     chapterList.add("----------");
 
@@ -180,6 +182,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "8.2.2 通知的使用方法":
         startActivity(new Intent(this, NotificationActivity.class));
+        break;
+      case "8.3.1 调用摄像头拍照":
+        startActivity(new Intent(this, CameraActivity.class));
         break;
 
       case "定时任务 Alarm 机制":
