@@ -33,8 +33,10 @@ import com.just.first.chapter06.SharedPreferencesActivity;
 import com.just.first.chapter07.ContactsActivity;
 import com.just.first.chapter07.RunTimePermissionActivity;
 import com.just.first.chapter08.AlbumActivity;
+import com.just.first.chapter08.AudioActivity;
 import com.just.first.chapter08.CameraActivity;
 import com.just.first.chapter08.NotificationActivity;
+import com.just.first.chapter08.VideoActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
 import java.util.ArrayList;
@@ -100,6 +102,8 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("8.2.2 通知的使用方法");
     chapterList.add("8.3.1 调用摄像头拍照");
     chapterList.add("8.3.2 调用手机相册选取图片");
+    chapterList.add("8.4.1 播放音频");
+    chapterList.add("8.4.2 播放视频");
 
     chapterList.add("----------");
 
@@ -190,6 +194,12 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "8.3.2 调用手机相册选取图片":
         startActivity(new Intent(this, AlbumActivity.class));
+        break;
+      case "8.4.1 播放音频":
+        startActivity(new Intent(this, AudioActivity.class));
+        break;
+      case "8.4.2 播放视频":
+        startActivity(new Intent(this, VideoActivity.class));
         break;
 
       case "定时任务 Alarm 机制":
