@@ -1968,6 +1968,496 @@ android:textAllCaps="false"
 
 
 
+## 第 8 章 多媒体
+
+### 01. 通知
+
+1. **通知 Notification** 在手机最上方的**状态栏**中会显示一个通知的**图标**，**下拉**状态栏后可以看到通知的**详细内容**。
+
+2. 通知可以在**活动**里创建，可以在**广播接收器**中创建，可以在**服务**里创建。
+
+3. 创建并显示通知
+
+   ```java
+   private void showNotification() {
+     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);// 获取通知管理对象
+     Notification notification = new NotificationCompat.Builder(this)// Builder 设计模式
+         .setContentTitle("This is title")// 设置标题
+         .setContentText("This is content")// 设置文本
+         .setWhen(System.currentTimeMillis())// 指定通知被创建的时间以毫秒为单位
+         .setSmallIcon(R.mipmap.ic_launcher)// 设置小图标只能使用纯 alpha 图层的图片
+         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_mario))// 设置大图标
+         .build();// 创建
+     notificationManager.notify(23, notification);// 通知管理器去显示该条通知[通知的ID][通知对象]要保证 ID 的不同
+   }
+   ```
+
+   * 通过 **Context** 获取**通知管理**对象
+   * 为了保证各个版本**兼容**使用 `support-v4` 包中的 `NotificationCompat` 来创建 `NotificationManager` 对象
+   * 注意设计模式之 `Builder` 设计模式
+   * 设置**小图标**只能使用**纯 alpha 图层**的图片
+   * 通知显示时需要 **ID** 同时要保证 ID 的不同
+
+4. **PendingIntent**
+
+   * 类似 **Intent** 指明意图，可用于`启动活动`，`启动服务`，`发送广播`等。
+   * 不同点 **Intent** 更加倾向于**立即执行**某个动作，而 **PendingIntent** 更加倾向于**在某个合适的时机去执行**某个动作。
+   * 可以把 **PendingIntent** 简单理解为**延迟执行**的 **Intent**
+
+   ```java
+   Intent intent = new Intent(this, MainActivity.class);
+   PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+   ```
+
+   * 第**二**个参数**请求码**
+   * 第**四**个参数**确定行为的标识**，取值有四种 `FLAG_ONE_SHOT` , `FLAG_NO_CREATE` , `FLAG_CANCEL_CURRENT` , `FLAG_UPDATE_CURRENT`
+
+5. 通知取消
+
+   * 在 `build()` 方法之前进行调用
+
+     ```java
+     .setAutoCancel(true)// 设置自动取消
+     ```
+
+   * 通过**通知管理对象**取消**指定 ID** 的通知
+
+     ```java
+     notificationManager.cancel(23);// 通知管理对象取消指定 ID 的通知
+     ```
+
+### 02. 通知进阶
+
+1. 设置声音
+
+   ```java
+   .setSound(Uri.fromFile(new File("/system/media/audio/ringtones/23_Game.ogg")))// 设置声音
+   ```
+
+   * 通过 **Uri** 传递一个**音频文件**的地址
+
+2. 设置振动
+
+   ```java
+   .setVibrate(new long[]{0, 1000, 1000, 1000, 1000, 1000})// 设置振动[静止时长][振动时长]单位毫秒
+   ```
+
+   * 参数是**长整型**的**数组**，用于设置手机**静止**和**振动**的**时长**，以**毫秒**为单位
+   * 参数顺序 `[静止时长][振动时长][静止时长][振动时长]` 如此循环
+   * 振动需要手机**权限**
+
+   ```java
+   <uses-permission android:name="android.permission.VIBRATE" />
+   ```
+
+3. 设置 LED 灯
+
+   ```java
+   .setLights(Color.RED, 1000, 1000)// 设置 LED 灯 [颜色][亮灯时长][灭灯时长]单位毫秒
+   ```
+
+   * 发送通知后**息屏**过一会儿观察 LED 灯
+   * 程序被死之后 LED 也会停止闪烁
+
+4. 设置通知为默认配置
+
+   ```java
+   .setDefaults(NotificationCompat.DEFAULT_ALL)// 设置默认配置
+   ```
+
+   * 它会根据当前手机的环境来决定播放什么铃声，以及如何振动等
+
+### 03. 通知高阶
+
+1. 构建富文本通知
+
+   * 显示**超长**的文本
+
+     ```java
+     .setStyle(new NotificationCompat.BigTextStyle().bigText("If we can only encounter each other rather than stay with each other,then I wish we had never encountered."))// 显示特别长的文本
+     ```
+
+   * 显示**大图片**
+
+     ```java
+     .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_mountain)))// 显示大图片
+     ```
+
+2. 设置通知重要程度
+
+   ```java
+   .setPriority(NotificationCompat.PRIORITY_MAX)// 设置通知的重要程度
+   ```
+
+   * `PRIORITY_DEFAULT` 默认程度，和不设置一样
+   * `PRIORITY_MIN` 最低重要程度，系统会在特定情况显示比如下拉状态栏的时候
+   * `PRIORITY_LOW` 较低重要程度，系统会将通知缩小或改变其显示的顺序将其靠后
+   * `PRIORITY_HIGH` 较高重要程度，系统会将通知放大或改变其显示的顺序将其靠前
+   * `PRIORITY_MAX` 最高重要程度，必须让用户立刻看到甚至需要用户做出响应操作
+
+### 04. 摄像头
+
+1. 调用摄像头拍照
+
+   ```java
+   private Uri imageUri;// 获取一个 URI 对象
+   public static final int TAKE_PHOTO = 23;
+
+   /**
+    * 调用摄像头拍照
+    */
+   public void takePhoto(View view) {
+     File imageFile = new File(getExternalCacheDir(), "image.jpg");// 指定文件的路径及名称
+     if (imageFile.exists()) {
+       imageFile.delete();// 文件存在就删除
+     }
+     try {
+       imageFile.createNewFile();// 创建新的文件
+     } catch (IOException e) {
+       e.printStackTrace();
+     }
+     // 内容提供者
+     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {// Android 7.0 进行适配
+       imageUri = FileProvider.getUriForFile(this, "com.just.first.fileprovider", imageFile);// [上下文][任意一个唯一字符串][File对象]
+     } else {// 这个 URI 标识者图片的本地真是路径
+       imageUri = Uri.fromFile(imageFile);
+     }
+     Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");// 创建意图并指定 Action
+     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// 携带参数
+     startActivityForResult(intent, TAKE_PHOTO);// 启动意图
+   }
+
+   @Override
+   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+     switch (requestCode) {// 此方式中指定了拍照图片位置因此 data 为 null
+       case TAKE_PHOTO:
+         try {// 手机拍照图片一般3M左右因此处理图片内存溢出需要注意
+           Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));// 从内容提供者中获取数据
+           iv_photo.setImageBitmap(bitmap);// 进行图片的显示
+         } catch (FileNotFoundException e) {
+           e.printStackTrace();
+         }
+         break;
+     }
+   }
+   ```
+
+2. 兼容适配
+
+   调用 **FileProvider** 的 **getUriForFile()** 方法将 **File** 对象转换成一个**封装过的 Uri 对象**。该 **getUriForFile()** 方法接收**3个参数**，第一个 **Context** 对象，第二个可以是**任意唯一的字符串**，第三个是 **File** 对象。从 **Android 7.0** 开始直接使用本地真实路径的 Uri 被认为是**不安全**的，会抛出一个 **FileUriExposedException** 异常。而 **FileProvider** 则是一种**特殊的内容提供器**，它使用了和内容提供器**类似的机制**来对数据进行保护，可以**选择性地**将封装过的 Uri 共享给外部，从而提高了应用的安全性。
+
+   **注意：**并没有结束，还需要在功能清单中注册内容提供器
+
+   ```java
+   <!-- Android 7.0 -->
+   <provider
+     android:name="android.support.v4.content.FileProvider"
+     android:authorities="com.just.first.fileprovider"
+     android:exported="false"
+     android:grantUriPermissions="true">
+     <meta-data
+       android:name="android.support.FILE_PROVIDER_PATHS"
+       android:resource="@xml/file_paths" />
+   </provider>
+   ```
+
+   * `android:name` 属性的值是固定的
+   * `android:authorities` 属性的值必须和 `getUriForFile()` 方法第二个参数一致
+   * `<meta-data/>` 标签指定 Uri 的共享路径，引用了一个资源文件
+   * 在项目的 `res` 路径下创建 `xml` 文件夹并创建 `file_paths.xml` 文件
+
+     ```java
+     <?xml version="1.0" encoding="utf-8"?>
+     <resources>
+       <paths>
+         <external-path
+           name="camera_photos"
+           path="Android/data/com.just.first/" />
+         <external-path
+           name="external_storage_root"
+           path="." />
+       </paths>
+     </resources>
+     ```
+
+     * `<external-path/>` 标签指定 Uri 共享
+     * `name` 属性可以**随便填写**
+     * `path` 属性值表示**共享的具体路径**
+     * `path` 属性不填写表示**将整个 SD 卡进行共享**
+
+3. 权限
+
+   ```java
+   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+   ```
+
+   在 **Android 4.4** 系统之后访问 **SD 卡**的**应用关联目录**不用声明权限。
+
+### 05. 相册
+
+1. 从相册中选择照片
+
+   ```java
+   public static final int CHOOSE_ALBUM = 24;
+
+   /**
+    * 点击按钮从手机相册中选取
+    */
+   public void chooseAlbum(View view) {
+     if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {// 检查是否有权限
+       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 25);// 没有权限进行申请权限
+     } else {
+       openAlbum();// 有权限则打开相册
+     }
+   }
+
+   @Override
+   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+     switch (requestCode) {
+       case 25:
+         if (grantResults != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+           openAlbum();// 有权限则打开相册
+         } else {
+           ToastUtil.showShortToast(this, "You denied the permission.");
+         }
+         break;
+     }
+   }
+
+   private void openAlbum() {
+     Intent intent = new Intent("android.intent.action.GET_CONTENT");// 指定 action
+     intent.setType("image/*");// 指定类型
+     startActivityForResult(intent, CHOOSE_ALBUM);// 通过 Intent 打开相册
+   }
+
+   @Override
+   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+     switch (requestCode) {
+       case CHOOSE_ALBUM:
+         if (RESULT_OK == resultCode) {// 正常的返回码
+           if (Build.VERSION.SDK_INT >= 19) {// Android 4.4 及以上版本
+             HandleImageOnKitKat(data);
+           } else {// Android 4.4 以下版本
+             HandleImageBeforeKitKat(data);
+           }
+         }
+         break;
+     }
+   }
+
+   @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+   private void HandleImageOnKitKat(Intent data) {
+     String imagePath = null;// 图片路径
+     Uri uri = data.getData();// 获取 Uri 对象
+     if (DocumentsContract.isDocumentUri(this, uri)) {//  如果是 Document 类型的 Uri
+       String documentId = DocumentsContract.getDocumentId(uri);
+       if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+         String id = documentId.split(":")[1];// 解析出数字格式的 id
+         String selection = MediaStore.Images.Media._ID + "=" + id;
+         imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+       } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+         Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(documentId));
+         imagePath = getImagePath(contentUri, null);
+       }
+     } else if ("content".equalsIgnoreCase(uri.getScheme())) {//  如果是 content 类型的 Uri
+       imagePath = getImagePath(uri, null);
+     } else if ("file".equalsIgnoreCase(uri.getScheme())) {//  如果是 file 类型的 Uri
+       imagePath = uri.getPath();
+     }
+     displayImage(imagePath);// 文件路径进行图片展示
+   }
+
+   private void HandleImageBeforeKitKat(Intent data) {
+     Uri uri = data.getData();
+     String imagePath = getImagePath(uri, null);
+     displayImage(imagePath);
+   }
+
+   private String getImagePath(Uri uri, String selection) {
+     String path = null;// 通过内容提供者获取图片路径
+     Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+     if (cursor != null) {
+       if (cursor.moveToFirst()) {// 拿出第一条数据
+         path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+       }
+       cursor.close();// 游标用完要关闭
+     }
+     return path;
+   }
+
+   private void displayImage(String imagePath) {
+     if (!TextUtils.isEmpty(imagePath)) {// 注意内存溢出
+       Bitmap bitmap = BitmapFactory.decodeFile(imagePath);// 利用工厂类从路径加载出图片
+       iv_photo.setImageBitmap(bitmap);// 显示图片
+     } else {
+       ToastUtil.showShortToast(this, "Failed to get image.");
+     }
+   }
+   ```
+
+2. 动态权限申请
+
+   相册中的图片都是**存储在 SD 卡**上的，我们要从 SD卡中读取照片就需要申请这个权限。
+
+3. 意图启动
+
+   指定意图 **action** 为 `android.intent.action.GET_CONTENT` 以及意图**类型**为 `image/*` 启动相册
+
+4. 兼容适配
+
+   在 Android 4.4 及以上的版本中，选取相册中的图片不再返回图片真实的 Uri 了，而是一个封装过的 Uri 对象，因此需要对这个封装过的对象进行解析。
+
+### 06. 播放音频
+
+1. 使用 MediaPlayer 播放本地音频
+
+   ```java
+   private MediaPlayer mediaPlayer;
+
+   /**
+    * 初始化播放器
+    */
+   private void initMediaPlay() {
+     release();// 资源释放
+     mediaPlayer = new MediaPlayer();// 初始化
+     File audioFile = new File(Environment.getExternalStorageDirectory() + "/JustDo23/audio/", "Sugar.mp3");// 指定文件路径
+     try {
+       mediaPlayer.setDataSource(audioFile.getPath());
+       mediaPlayer.prepare();
+     } catch (IOException e) {
+       e.printStackTrace();
+     }
+   }
+
+   /**
+    * 释放资源
+    */
+   private void release() {
+     if (mediaPlayer != null) {
+       if (mediaPlayer.isPlaying()) {
+         mediaPlayer.stop();
+         mediaPlayer.reset();
+       }
+       mediaPlayer.release();
+       mediaPlayer = null;
+     }
+   }
+
+   @Override
+   public void onClick(View v) {
+     switch (v.getId()) {
+       case R.id.bt_play:// 播放
+         if (mediaPlayer != null) {
+           mediaPlayer.start();
+         }
+         break;
+       case R.id.bt_pause:// 暂停
+         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+           mediaPlayer.pause();
+         }
+         break;
+       case R.id.bt_stop:// 停止
+         initMediaPlay();
+         break;
+     }
+   }
+   ```
+
+2. 使用 MediaPlayer 常用方法
+
+   | 方法名             | 功能描述                 |
+   | --------------- | -------------------- |
+   | setDataSource() | 设置要播放的音频文件的位置        |
+   | prepare()       | 进行准备操作               |
+   | start()         | 开始或继续播放              |
+   | pause()         | 暂停或者继续播放             |
+   | reset()         | 重置到刚刚创建的状态           |
+   | seekTo()        | 从指定位置开始播放            |
+   | stop()          | 停止播放调用之后需要重新初始才能继续播放 |
+   | release()       | 释放相关的资源              |
+   | isPlaying()     | 是否正在播放               |
+   | getDuration()   | 获取载入的音频文件的总时长        |
+
+3. 注意方法的调用顺序
+
+4. 注意配合 Activity 的生命周期进行控制
+
+   ```java
+   @Override
+   protected void onDestroy() {
+     super.onDestroy();
+     release();
+   }
+   ```
+
+### 07. 播放视频
+
+1. 使用 VideoView 播放本地视频
+
+   ```java
+   private VideoView videoView;
+
+   /**
+    * 初始视频路径
+    */
+   private void initVideoPath() {
+     File videoFile = new File(Environment.getExternalStorageDirectory() + "/JustDo23/video/", "luck.mp4");// 指定文件路径
+     videoView.setVideoPath(videoFile.getPath());
+   }
+
+   @Override
+   public void onClick(View v) {
+     switch (v.getId()) {
+       case R.id.bt_play:// 播放
+         if (!videoView.isPlaying()) {
+           videoView.start();
+         }
+         break;
+       case R.id.bt_pause:// 暂停
+         if (videoView.isPlaying()) {
+           videoView.pause();
+         }
+         break;
+       case R.id.bt_restart:// 停止
+         if (videoView.isPlaying()) {
+           videoView.resume();
+         }
+         break;
+     }
+   }
+
+   @Override
+   protected void onDestroy() {
+     super.onDestroy();
+     if (videoView != null) {
+       videoView.suspend();// 资源释放
+     }
+   }
+   ```
+
+2. 使用 VideoView 常用方法
+
+   | 方法名            | 功能描述          |
+   | -------------- | ------------- |
+   | setVideoPath() | 设置要播放的视频文件的位置 |
+   | start()        | 开始或继续播放       |
+   | pause()        | 暂停播放          |
+   | resume()       | 视频从头开始播放      |
+   | seekTo()       | 从指定位置开始播放     |
+   | isPlaying()    | 是否正在播放        |
+   | getDuration()  | 获取载入的视频文件的总时长 |
+
+### 08. 小结
+
+1. 类似网易云音乐这种可以控制音乐播放的通知的实现。自定义通知布局。
+2. 图片的相关处理，避免内存溢出等。
+3. 对 MediaPlayer 进行详细的总结。
+4. 对 VideoView 进行详细的学习总结。
+5. 查阅 VideoView 源码。
+
+
+
+
 
 
 
