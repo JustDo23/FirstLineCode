@@ -37,6 +37,10 @@ import com.just.first.chapter08.AudioActivity;
 import com.just.first.chapter08.CameraActivity;
 import com.just.first.chapter08.NotificationActivity;
 import com.just.first.chapter08.VideoActivity;
+import com.just.first.chapter09.HttpURLConnectionActivity;
+import com.just.first.chapter09.OkHttpActivity;
+import com.just.first.chapter09.PullActivity;
+import com.just.first.chapter09.WebViewActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
 import java.util.ArrayList;
@@ -104,6 +108,10 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("8.3.2 调用手机相册选取图片");
     chapterList.add("8.4.1 播放音频");
     chapterList.add("8.4.2 播放视频");
+    chapterList.add("9.1.1 加载网页");
+    chapterList.add("9.2.1 使用 HttpURLConnection");
+    chapterList.add("9.2.2 使用 OkHttp");
+    chapterList.add("9.3.1 Pull 解析方式");
 
     chapterList.add("----------");
 
@@ -200,6 +208,18 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "8.4.2 播放视频":
         startActivity(new Intent(this, VideoActivity.class));
+        break;
+      case "9.1.1 加载网页":
+        startActivity(new Intent(this, WebViewActivity.class));
+        break;
+      case "9.2.1 使用 HttpURLConnection":
+        startActivity(new Intent(this, HttpURLConnectionActivity.class));
+        break;
+      case "9.2.2 使用 OkHttp":
+        startActivity(new Intent(this, OkHttpActivity.class));
+        break;
+      case "9.3.1 Pull 解析方式":
+        startActivity(new Intent(this, PullActivity.class));
         break;
 
       case "定时任务 Alarm 机制":

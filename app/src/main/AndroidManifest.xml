@@ -9,6 +9,7 @@
   <uses-permission android:name="android.permission.VIBRATE" />
   <uses-permission android:name="android.permission.CAMERA" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.INTERNET" />
 
   <application
     android:name=".application.FirstLineApplication"
@@ -54,6 +55,10 @@
     <activity android:name=".chapter08.AlbumActivity" />
     <activity android:name=".chapter08.AudioActivity" />
     <activity android:name=".chapter08.VideoActivity" />
+    <activity android:name=".chapter09.WebViewActivity" />
+    <activity android:name=".chapter09.HttpURLConnectionActivity" />
+    <activity android:name=".chapter09.OkHttpActivity" />
+    <activity android:name=".chapter09.PullActivity" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 
