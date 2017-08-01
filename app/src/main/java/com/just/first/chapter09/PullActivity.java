@@ -31,7 +31,7 @@ public class PullActivity extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_ok_http);
+    setContentView(R.layout.activity_pull);
     tv_result = (TextView) findViewById(R.id.tv_result);
   }
 

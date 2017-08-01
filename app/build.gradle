@@ -41,4 +41,5 @@ dependencies {// 依赖库 [本地依赖][库依赖][远程依赖]
   compile 'com.android.support:percent:25.3.1'// 百分比布局
   compile 'org.litepal.android:core:1.5.1'// LitePal 数据库
   compile 'com.squareup.okhttp3:okhttp:3.4.1'// OKHttp
+  compile 'com.google.code.gson:gson:2.8.1'// Gson
 }

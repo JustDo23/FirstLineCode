@@ -37,9 +37,12 @@ import com.just.first.chapter08.AudioActivity;
 import com.just.first.chapter08.CameraActivity;
 import com.just.first.chapter08.NotificationActivity;
 import com.just.first.chapter08.VideoActivity;
+import com.just.first.chapter09.GsonActivity;
 import com.just.first.chapter09.HttpURLConnectionActivity;
+import com.just.first.chapter09.JsonActivity;
 import com.just.first.chapter09.OkHttpActivity;
 import com.just.first.chapter09.PullActivity;
+import com.just.first.chapter09.SaxActivity;
 import com.just.first.chapter09.WebViewActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
@@ -112,6 +115,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("9.2.1 使用 HttpURLConnection");
     chapterList.add("9.2.2 使用 OkHttp");
     chapterList.add("9.3.1 Pull 解析方式");
+    chapterList.add("9.3.2 SAX 解析方式");
+    chapterList.add("9.4.1 解析 JSON");
+    chapterList.add("9.4.2 使用 Gson");
 
     chapterList.add("----------");
 
@@ -220,6 +226,15 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "9.3.1 Pull 解析方式":
         startActivity(new Intent(this, PullActivity.class));
+        break;
+      case "9.3.2 SAX 解析方式":
+        startActivity(new Intent(this, SaxActivity.class));
+        break;
+      case "9.4.1 解析 JSON":
+        startActivity(new Intent(this, JsonActivity.class));
+        break;
+      case "9.4.2 使用 Gson":
+        startActivity(new Intent(this, GsonActivity.class));
         break;
 
       case "定时任务 Alarm 机制":

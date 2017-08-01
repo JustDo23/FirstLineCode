@@ -59,6 +59,9 @@
     <activity android:name=".chapter09.HttpURLConnectionActivity" />
     <activity android:name=".chapter09.OkHttpActivity" />
     <activity android:name=".chapter09.PullActivity" />
+    <activity android:name=".chapter09.SaxActivity" />
+    <activity android:name=".chapter09.JsonActivity" />
+    <activity android:name=".chapter09.GsonActivity" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 
