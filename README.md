@@ -2459,6 +2459,474 @@ android:textAllCaps="false"
 
 
 
+## 第 9 章 网络技术
+
+### 01. WebView
+
+1. 使用 WebView 加载网页
+
+   ```java
+   private void initWebView() {
+     wb_net.getSettings().setJavaScriptEnabled(true);// 支持 JavaScript 脚本
+     wb_net.setWebViewClient(new WebViewClient());// 网页跳转仍在当前浏览器
+     wb_net.loadUrl("http://www.baidu.com");// 加载网页
+   }
+   ```
+
+2. 方法
+
+   * `setWebViewClient()` 方法作用，当需要从一个网页跳转另一个网页时，目标网页仍然在当前 WebView 中显示，而不是打开系统浏览器。
+
+3. 网络权限
+
+   ```java
+   <uses-permission android:name="android.permission.INTERNET" />
+   ```
+
+### 02. 使用 HTTP 协议访问网络
+
+1. 工作原理
+
+   **客户端**向**服务器**发出一条 HTTP **请求**，服务器收到请求之后**返回**一些**数据**给客户端，然后客户端再对这些数据进行**解析**和**处理**就可以了。
+
+2. 使用 HttpURLConnection
+
+   ```java
+   private void sendRequestWithHttpURLConnection() {
+     new Thread(new Runnable() {// 网络请求耗时操作放在子线程中
+
+       @Override
+       public void run() {
+         HttpURLConnection httpURLConnection = null;// 连接对象
+         BufferedReader bufferedReader = null;// 数据读取流
+         try {
+           URL url = new URL("http://www.baidu.com");// URL 对象
+           httpURLConnection = (HttpURLConnection) url.openConnection();// 打开连接
+           httpURLConnection.setRequestMethod("GET");// 设置网络请求模式
+           httpURLConnection.setConnectTimeout(8000);// 设置连接超时时间
+           httpURLConnection.setReadTimeout(8000);// 设置数据读取超时时间
+           InputStream inputStream = httpURLConnection.getInputStream();// 获取数据读取流
+           bufferedReader = new BufferedReader(new InputStreamReader(inputStream));// 对流封装提供效率
+           StringBuilder response = new StringBuilder();// 请求结果
+           String line;
+           while ((line = bufferedReader.readLine()) != null) {
+             response.append(line);// 从数据读取流中读取数据
+           }
+           showResponse(response.toString());// 进行界面展示
+         } catch (IOException e) {
+           e.printStackTrace();
+         } finally {
+           if (bufferedReader != null) {
+             try {
+               bufferedReader.close();// 关闭数据流
+             } catch (IOException e) {
+               e.printStackTrace();
+             }
+           }
+           if (httpURLConnection != null) {
+             httpURLConnection.disconnect();// 关闭网络连接
+           }
+         }
+       }
+     }).start();
+   }
+
+   private void showResponse(final String response) {
+     runOnUiThread(new Runnable() {// 界面刷新的工作必须放在主线程中
+
+       @Override
+       public void run() {
+         tv_result.setText(response);
+       }
+     });
+   }
+   ```
+
+3. 小细节
+
+   * 网络请求模式有 `GET` 和 `POST` 等，其中 `GET` 表示希望从服务器那里**获取**数据，而 `POST` 表示希望**提交**数据给服务器。
+   * 设置**网络连接**超时时间
+   * 设置**数据读取**超时时间
+   * 设置**请求头**数据
+   * 网络请求等**耗时操作**需要放在**子线程**
+   * **界面控件刷新**需要放在**主线程**
+
+### 03. 使用 OKHttp
+
+1. 添加依赖
+
+   ```groovy
+   compile 'com.squareup.okhttp3:okhttp:3.4.1'// OKHttp
+   ```
+
+2. 使用 OKHttp
+
+   ```java
+   private void sendRequestWithOkHttp() {
+     new Thread(new Runnable() {// 网络请求耗时操作放在子线程中
+
+       @Override
+       public void run() {
+         try {
+           OkHttpClient okHttpClient = new OkHttpClient();// OK 客户端
+           RequestBody requestBody = new FormBody.Builder()
+               .add("userName", "admin")
+               .add("passWord", "232323")
+               .build();// 参数封装
+           Request request = new Request.Builder()
+               .url("https://www.baidu.com")
+               .post(requestBody)// 用 POST 请求携带参数
+               .build();
+           Response response = okHttpClient.newCall(request).execute();// 执行请求返回响应对象
+           String responseContent = response.body().string();// 从响应对象中获取字符串
+           showResponse(responseContent);// 进行界面展示
+         } catch (IOException e) {
+           e.printStackTrace();
+         }
+       }
+     }).start();
+   }
+   ```
+
+### 04. Pull 方式解析 XML
+
+1. XML 格式数据内容
+
+   ```xml
+   <apps>
+     <app>
+       <id>1</id>
+       <name>Google</name>
+       <version>1.1</version>
+     </app>
+     <app>
+       <id>2</id>
+       <name>FaceBook</name>
+       <version>1.2</version>
+     </app>
+     <app>
+       <id>3</id>
+       <name>Twitter</name>
+       <version>1.3</version>
+     </app>
+   </apps>
+   ```
+
+2. 使用 Pull 解析
+
+   ```java
+   private void parseXMLWithPull(String responseContent) {
+     try {
+       XmlPullParserFactory xmlPullParserFactory = XmlPullParserFactory.newInstance();// 获取工厂实例
+       XmlPullParser xmlPullParser = xmlPullParserFactory.newPullParser();// 工厂实例获取一个解析器
+       xmlPullParser.setInput(new StringReader(responseContent));// 以流的方式给解析器设置数据源
+       int eventType = xmlPullParser.getEventType();// 获取事件类型
+       String id = "";
+       String name = "";
+       String version = "";
+       while (eventType != XmlPullParser.END_DOCUMENT) {// 不是文档结尾
+         String nodeName = xmlPullParser.getName();// 获取节点名称
+         switch (eventType) {// 事件类型
+           case XmlPullParser.START_TAG:// 标签开始
+             if ("id".equals(nodeName)) {// 判断标签名称
+               id = xmlPullParser.nextText();// 获取标签中的内容
+             } else if ("name".equals(nodeName)) {
+               name = xmlPullParser.nextText();
+             } else if ("version".equals(nodeName)) {
+               version = xmlPullParser.nextText();
+             }
+             break;
+           case XmlPullParser.END_TAG:// 标签结束
+             if ("app".equals(nodeName)) {
+               LogUtils.e("id = " + id + " name = " + name + " version = " + version + "\n");
+             }
+             break;
+           default:
+             break;
+         }
+         eventType = xmlPullParser.next();// 获取下一个事件
+       }
+     } catch (Exception e) {
+       e.printStackTrace();
+     }
+   }
+   ```
+
+3. 重要方法
+
+   * `getName()` 方法获取当前节点名称
+   * `nextText()` 方法获取当前节点内的具体内容
+
+### 05. SAX 方式解析 XML
+
+1. 自定义 SaxHandler 继承自 DefaultHandler
+
+   ```java
+   /**
+    * 9.3.2 SAX 解析方式
+    *
+    * @author JustDo23
+    * @since 2017年08月01日
+    */
+   public class SaxHandler extends DefaultHandler {
+
+     private String nodeName;
+     private StringBuilder id;
+     private StringBuilder name;
+     private StringBuilder version;
+
+     /**
+      * 开始解析文档
+      *
+      * @throws SAXException 异常
+      */
+     @Override
+     public void startDocument() throws SAXException {
+       super.startDocument();
+       id = new StringBuilder();
+       name = new StringBuilder();
+       version = new StringBuilder();
+     }
+
+     /**
+      * 开始解析节点
+      *
+      * @param uri        命名空间字符串[可能为空]
+      * @param localName  节点名称[可能为空]
+      * @param qName      限定名[可能为空]
+      * @param attributes 属性
+      * @throws SAXException 异常
+      */
+     @Override
+     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+       super.startElement(uri, localName, qName, attributes);
+       nodeName = localName;// 当前节点名称
+     }
+
+     /**
+      * 获取节点内容[可能会调用多次，一些换行符也被当作内容解析出来]
+      *
+      * @param ch     字节数组
+      * @param start  起始位置
+      * @param length 有效长度
+      * @throws SAXException
+      */
+     @Override
+     public void characters(char[] ch, int start, int length) throws SAXException {
+       super.characters(ch, start, length);
+       if ("id".equals(nodeName)) {
+         id.append(ch, start, length);
+       } else if ("name".equals(nodeName)) {
+         name.append(ch, start, length);
+       } else if ("version".equals(nodeName)) {
+         version.append(ch, start, length);
+       }
+     }
+
+     /**
+      * 完成节点解析
+      *
+      * @param uri       命名空间字符串[可能为空]
+      * @param localName 节点名称[可能为空]
+      * @param qName     限定名[可能为空]
+      * @throws SAXException 异常
+      */
+     @Override
+     public void endElement(String uri, String localName, String qName) throws SAXException {
+       super.endElement(uri, localName, qName);
+       if ("app".equals(localName)) {
+         LogUtils.e("id = " + id.toString() + " name = " + name.toString() + " version = " + version.toString() + "\n");
+         id.setLength(0);
+         name.setLength(0);
+         version.setLength(0);
+       }
+     }
+
+     /**
+      * 完成文档解析
+      *
+      * @throws SAXException 异常
+      */
+     @Override
+     public void endDocument() throws SAXException {
+       super.endDocument();
+       LogUtils.e("SAX 解析结束");
+     }
+
+   }
+   ```
+
+2. 使用 SAX 解析
+
+   ```java
+   private void parseXMLWithSAX(String responseContent) {
+     try {
+       SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();// 获取工厂实例
+       XMLReader xmlReader = saxParserFactory.newSAXParser().getXMLReader();// 利用工厂获取解析器后获取XML读取器
+       SaxHandler saxHandler = new SaxHandler();// 实例化自定义的 Handler
+       xmlReader.setContentHandler(saxHandler);//  读取器设置 Handler
+       xmlReader.parse(new InputSource(new StringReader(responseContent)));// 开始解析
+     } catch (Exception e) {
+       e.printStackTrace();
+     }
+   }
+   ```
+
+### 06. 解析 JSON 格式数据
+
+1. json 格式数据内容
+
+   ```json
+   [
+     {
+       "id": "4",
+       "name": "Chrome",
+       "version": "1.4"
+     },
+     {
+       "id": "5",
+       "name": "Safari",
+       "version": "1.5"
+     },
+     {
+       "id": "6",
+       "name": "Firefox",
+       "version": "1.6"
+     }
+   ]
+   ```
+
+2. 使用 JSONObject
+
+   ```java
+   private void parseJson(String responseContent) {
+     try {
+       JSONArray jsonArray = new JSONArray(responseContent);// 获取数组对象
+       for (int i = 0; i < jsonArray.length(); i++) {// 对数组进行循环
+         JSONObject jsonObject = jsonArray.getJSONObject(i);// 挨个获取JSONObject
+         String id = jsonObject.getString("id");
+         String name = jsonObject.getString("name");
+         String version = jsonObject.getString("version");
+         LogUtils.e("id = " + id + " name = " + name + " version = " + version + "\n");
+       }
+     } catch (Exception e) {
+       e.printStackTrace();
+     }
+   }
+   ```
+
+3. 使用 Gson
+
+   1. 添加依赖
+
+      ```groovy
+      compile 'com.google.code.gson:gson:2.8.1'// Gson
+      ```
+
+   2. 定义实体类
+
+   3. 使用 Gson
+
+      ```java
+      private void parseJsonWithGson(String responseContent) {
+        Gson gson = new Gson();// 实例化对象
+        List<Product> productList = gson.fromJson(responseContent, new TypeToken<List<Product>>() {}.getType());// 解析数组方法
+        for (Product product : productList) {
+          LogUtils.e("id = " + product.getId() + " name = " + product.getName() + " version = " + product.getVersion() + "\n");
+        }
+      }
+      ```
+
+### 07. 最佳实践
+
+1. 回调接口
+
+   ```java
+   public interface HttpCallBackListener {
+
+     /**
+      * 网络请求完成时回调
+      *
+      * @param response 返回数据
+      */
+     void onFinish(String response);
+
+     /**
+      * 网络请求出现错误
+      *
+      * @param e 异常
+      */
+     void onError(Exception e);
+
+   }
+   ```
+
+2. 工具类封装
+
+   ```java
+   public class HttpUtil {
+
+     public static void sendHttpRequest(final String address, final HttpCallBackListener httpCallBackListener) {
+       new Thread(new Runnable() {
+
+         @Override
+         public void run() {
+           HttpURLConnection httpURLConnection = null;
+           try {
+             URL url = new URL(address);
+             httpURLConnection = (HttpURLConnection) url.openConnection();
+             httpURLConnection.setRequestMethod("GET");
+             httpURLConnection.setConnectTimeout(8000);
+             httpURLConnection.setReadTimeout(8000);
+             httpURLConnection.setDoInput(true);
+             httpURLConnection.setDoOutput(true);
+             InputStream inputStream = httpURLConnection.getInputStream();
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+             StringBuilder response = new StringBuilder();
+             String line;
+             while ((line = bufferedReader.readLine()) != null) {
+               response.append(line);
+             }
+             if (httpCallBackListener != null) {
+               httpCallBackListener.onFinish(response.toString());
+             }
+           } catch (Exception e) {
+             if (httpCallBackListener != null) {
+               httpCallBackListener.onError(e);
+             }
+           } finally {
+             if (httpURLConnection != null) {
+               httpURLConnection.disconnect();
+             }
+           }
+         }
+       }).start();
+     }
+
+     public static void sendOkHttpRequest(String address, okhttp3.Callback callback) {
+       OkHttpClient okHttpClient = new OkHttpClient();
+       Request request = new Request.Builder()
+           .url(address)
+           .build();
+       okHttpClient.newCall(request).enqueue(callback);// 开启子线程
+     }
+
+   }
+   ```
+
+3. 注意线程问题
+
+### 08. 小结
+
+1. 对 **WebView** 进行更详细的学习使用。
+2. 对 **HTTP 协议**进行更详细的学习使用。
+3. 如果可以那就看看 OKHttp 等的**源码解析**。
+4. 其他第三方网络请求框架简单了解。
+
+
+
+
+
 
 
 
