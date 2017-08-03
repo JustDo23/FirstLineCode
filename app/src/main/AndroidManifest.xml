@@ -62,6 +62,8 @@
     <activity android:name=".chapter09.SaxActivity" />
     <activity android:name=".chapter09.JsonActivity" />
     <activity android:name=".chapter09.GsonActivity" />
+    <activity android:name=".chapter10.UIReferenceActivity" />
+    <activity android:name=".chapter10.AsyncTaskActivity" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 
