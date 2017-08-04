@@ -64,6 +64,7 @@
     <activity android:name=".chapter09.GsonActivity" />
     <activity android:name=".chapter10.UIReferenceActivity" />
     <activity android:name=".chapter10.AsyncTaskActivity" />
+    <activity android:name=".chapter10.FirstServiceActivity" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 
@@ -104,6 +105,11 @@
         android:name="android.support.FILE_PROVIDER_PATHS"
         android:resource="@xml/file_paths" />
     </provider>
+
+    <service
+      android:name=".chapter10.FirstService"
+      android:enabled="true"
+      android:exported="true" />
 
   </application>
 

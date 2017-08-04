@@ -45,6 +45,7 @@ import com.just.first.chapter09.PullActivity;
 import com.just.first.chapter09.SaxActivity;
 import com.just.first.chapter09.WebViewActivity;
 import com.just.first.chapter10.AsyncTaskActivity;
+import com.just.first.chapter10.FirstServiceActivity;
 import com.just.first.chapter10.UIReferenceActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
@@ -122,6 +123,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("9.4.2 使用 Gson");
     chapterList.add("10.2.2 UI 刷新");
     chapterList.add("10.2.4 使用 AsyncTask");
+    chapterList.add("10.3.2 服务入门");
 
     chapterList.add("----------");
 
@@ -245,6 +247,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "10.2.4 使用 AsyncTask":
         startActivity(new Intent(this, AsyncTaskActivity.class));
+        break;
+      case "10.3.2 服务入门":
+        startActivity(new Intent(this, FirstServiceActivity.class));
         break;
 
       case "定时任务 Alarm 机制":
