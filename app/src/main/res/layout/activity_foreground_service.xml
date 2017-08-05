@@ -20,28 +20,4 @@
     android:text="Stop Service"
     android:textAllCaps="false" />
 
-  <Button
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="30dp"
-    android:onClick="bindService"
-    android:text="Bind Service"
-    android:textAllCaps="false" />
-
-  <Button
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:onClick="unbindService"
-    android:text="Unbind Service"
-    android:textAllCaps="false" />
-
-  <Button
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:onClick="goNext"
-    android:text="Go to next"
-    android:textAllCaps="false" />
-
 </LinearLayout>

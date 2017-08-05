@@ -65,6 +65,9 @@
     <activity android:name=".chapter10.UIReferenceActivity" />
     <activity android:name=".chapter10.AsyncTaskActivity" />
     <activity android:name=".chapter10.FirstServiceActivity" />
+    <activity android:name=".chapter10.SecondServiceActivity" />
+    <activity android:name=".chapter10.ForegroundServiceActivity" />
+    <activity android:name=".chapter10.IntentServiceActivity" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 
@@ -108,6 +111,14 @@
 
     <service
       android:name=".chapter10.FirstService"
+      android:enabled="true"
+      android:exported="true" />
+    <service
+      android:name=".chapter10.ForegroundService"
+      android:enabled="true"
+      android:exported="true" />
+    <service
+      android:name=".chapter10.FirstIntentService"
       android:enabled="true"
       android:exported="true" />
 

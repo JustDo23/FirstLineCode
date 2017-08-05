@@ -32,6 +32,7 @@ public class FirstService extends Service {
    */
   @Override
   public IBinder onBind(Intent intent) {
+    LogUtils.e("FirstService --> onBind()");
     return downloadBinder;
   }
 

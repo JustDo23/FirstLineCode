@@ -14,9 +14,9 @@ import com.just.first.base.BaseActivity;
  * 10.3.2 服务入门
  *
  * @author JustDo23
- * @since 2017年08月03日
+ * @since 2017年08月04日
  */
-public class FirstServiceActivity extends BaseActivity {
+public class SecondServiceActivity extends BaseActivity {
 
   private FirstService.DownloadBinder downloadBinder;
 
@@ -67,10 +67,6 @@ public class FirstServiceActivity extends BaseActivity {
 
   public void unbindService(View view) {
     unbindService(serviceConnection);// 解绑服务[停止服务]
-  }
-
-  public void goNext(View view) {
-    startActivity(new Intent(this, SecondServiceActivity.class));
   }
 
 }
