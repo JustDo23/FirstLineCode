@@ -49,6 +49,7 @@ import com.just.first.chapter10.FirstServiceActivity;
 import com.just.first.chapter10.ForegroundServiceActivity;
 import com.just.first.chapter10.IntentServiceActivity;
 import com.just.first.chapter10.UIReferenceActivity;
+import com.just.first.chapter10.download.DownloadActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
 import java.util.ArrayList;
@@ -128,6 +129,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("10.3.2 服务入门");
     chapterList.add("10.5.1 前台服务");
     chapterList.add("10.5.2 IntentService");
+    chapterList.add("10.6.3 文件下载");
 
     chapterList.add("----------");
 
@@ -260,6 +262,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "10.5.2 IntentService":
         startActivity(new Intent(this, IntentServiceActivity.class));
+        break;
+      case "10.6.3 文件下载":
+        startActivity(new Intent(this, DownloadActivity.class));
         break;
 
       case "定时任务 Alarm 机制":
