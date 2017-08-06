@@ -1939,7 +1939,7 @@ android:textAllCaps="false"
 
    * 前提是执行了 `add` 命令但还没有执行 `commit` 命令
 
-6.  查看提交记录
+6. 查看提交记录
 
    ```shell
    $ git log
@@ -2924,6 +2924,498 @@ android:textAllCaps="false"
 4. 其他第三方网络请求框架简单了解。
 
 
+
+
+
+## 第 10 章 服务
+
+### 01. 服务是什么
+
+1. **服务 Service** 是 Android 中实现程序**后台运行**的解决方案，它非常适合去执行那些**不需要**和用户**交互**而且还要求**长期运行**的任务。
+
+2. 需要**注意**的是服务**并不是**运行在一个独立的进程当中，而是**依赖于**创建服务时所在的**应用程序进程**。当某个应用程序进程被**杀掉时**，所有依赖于该进程的服务**也会停止运行**。
+
+3. 实际上服务**并不会**自动**开启线程**，所有的代码都是**默认**运行在**主线程**当中的。服务中的**耗时操作**仍然需要我们为其创建**子线程**，否则会出现主线程**被阻塞**的情况。
+
+### 02. 线程的基本用法
+
+1. 继承 Thread
+
+   ```java
+   class FirstThread extends Thread {
+
+     @Override
+     public void run() {
+       // 耗时操作
+     }
+   }
+   ```
+
+   启动线程
+
+   ```java
+   new FirstThread().start();
+   ```
+
+2. 实现 Runnable
+
+   ```java
+   class FirstRunnable implements Runnable {
+
+     @Override
+     public void run() {
+       // 耗时操作
+     }
+   }
+   ```
+
+   启动线程
+
+   ```java
+   new Thread(new FirstRunnable()).start();
+   ```
+
+3. 综合匿名内部类
+
+   ```java
+   new Thread(new Runnable() {
+
+     @Override
+     public void run() {
+       // 耗时操作
+     }
+   }).start();
+   ```
+
+### 03. 更新 UI 操作
+
+1. **Android** 中的 **UI** 是**线程不安全**的，也就是说**必须**在**主线程**中进行更新，否则会**异常**。
+
+2. 在**子线程**中需要更新 UI 是可以使用 **Handler** 机制进行。
+
+   ```java
+   private Handler handler = new Handler() {
+
+     @Override
+     public void handleMessage(Message msg) {
+       super.handleMessage(msg);
+       switch (msg.what) {
+         case 32:
+           // 更新 UI 操作
+           tv_result.setText("Nice to meet you");
+           break;
+       }
+     }
+   };
+
+   public void uiReferenceHandler(View view) {
+     new Thread(new Runnable() {
+
+       @Override
+       public void run() {
+         Message message = handler.obtainMessage();// 获取消息对象
+         message.what = 32;// 设置标志码
+         handler.sendMessage(message);// 发送消息
+       }
+     }).start();
+   }
+   ```
+
+### 04. 解析异步消息处理机制
+
+1. 异步消息处理主要由 4 个部分组成
+
+   * **`Message`** 是在**线程**之间**传递**的**消息**，它可以在内部**携带**少量的**信息**，用于在**不同线程之间交换数据**。
+   * **`Handler`** 是**消息处理者**，主要用于**发送**和**处理**消息。**发送消息**一般是使用 **Handler** 的 **`sendMessage()`** 方法，而发出的消息经过一系列地辗转处理后，**最终**会**传递**到 **Handler** 的 **`handleMessage()`** 方法中。
+   * **`MessageQueue`** 是**消息队列**，它主要用于**存放所有**通过 **Handler** 发送的消息。这部分消息会**一直存在**于**消息队列**中，**等待被处理**。**每个线程**中**只会有一个**消息队列 **`MessageQueue`** 对象。
+   * **`Looper`** 是**每个线程**中的 **MessageQueue** 的**管家**，调用 **Looper** 的 **`loop()`** 方法后，就会进入到一个**无限循环**当中，然后每当发现 **`MessageQueue`** 中存在**一条消息**，就会**将它取出**，并**传递**到 **Handler** 的 **`handleMessage()`** 方法中。**每个线程**中也只**会有一个 Looper** 对象。
+
+2. 上小节中由于 **Handler** 是在**主线程**中**创建**的，所以此时 `handlerMessage()` 方法中代码也会在**主线程中运行**，于是就可以**安心**进行 UI 操作了。
+
+3. 上小节中使用的 **`runOnUiThread()`** 方法其实就是一个**异步消息处理机制**的**接口封装**。
+
+### 05. 使用 AsyncTask
+
+1. 使用 **AsyncTask** 可以十分简单地从子线程**切换**到主线程。当然，AsyncTask 背后的**实现原理**也是基于**异步消息处理机制**。
+
+2. 自定义类**继承**抽象类 **`AsyncTask<Params, Progress, Result>`** 同时指定 **3** 个**泛型参数**
+
+   * **`Params`** 在执行 AsyncTask 时需要传入的参数，可用于在后台任务中使用。
+   * **`Progress`** 后台任务执行时，如果需要在界面上显示当前的进度，则使用这里指定的泛型作为进度单位。
+   * **`Result`** 当任务执行完毕后，如果需要对结果进行返回，则使用这里指定的泛型作为返回值类型。
+
+3. 实现抽象类中的抽象方法
+
+   * **`onPreExecute()`**
+     * 后台任务开始之前进行回调
+     * 用于进行一些界面上的初始化操作
+   * **`doInBackground(Params... params)`**
+     * 在子线程中执行耗时操作
+     * 耗时操作执行结束之后将结果返回
+     * 此方法中不能进行 UI 操作
+   * **`onProgressUpdate(Progress... values)`**
+     * 后台耗时操作执行过程中的进度回调
+     * 此方法中可以进行 UI 操作
+   * **`onPostExecute(Result result)`**
+     * 后台耗时操作执行结束并通过 return 语句进行返回时被调用
+     * 可以利用返回的数据进行 UI 的刷新
+
+4. 使用 AsyncTask
+
+   ```java
+   /**
+    * 自定义异步任务
+    *
+    * @since 2017年08月03日
+    */
+   class NetAsyncTask extends AsyncTask<String, Integer, String> {
+
+     /**
+      * 任务启动之前
+      */
+     @Override
+     protected void onPreExecute() {
+       super.onPreExecute();
+     }
+
+     /**
+      * 任务启动并后台运行
+      */
+     @Override
+     protected String doInBackground(String... params) {
+       publishProgress(20);// 进行进度刷新
+       return null;
+     }
+
+     /**
+      * 任务运行进度
+      */
+     @Override
+     protected void onProgressUpdate(Integer... values) {
+       super.onProgressUpdate(values);
+     }
+
+     /**
+      * 任务执行完毕
+      */
+     @Override
+     protected void onPostExecute(String s) {
+       super.onPostExecute(s);
+     }
+
+   }
+   ```
+
+   * **`publishProgress(Progress... values)`**
+       * 进行进度刷新调用之后会回调 `onProgressUpdate(Progress... values)` 方法
+
+5. 启动 AsyncTask
+
+   ```java
+   new NetAsyncTask().execute("https://www.baidu.com");
+   ```
+
+### 06. 服务基本用法
+
+1. 自定义服务继承 Service
+
+   ```java
+   /**
+    * 10.3.1 服务入门
+    *
+    * @since 2017年08月03日
+    */
+   public class FirstService extends Service {
+
+     /**
+      * 在服务被创建时调用
+      */
+     @Override
+     public void onCreate() {
+       super.onCreate();
+     }
+
+     /**
+      * @param intent 意图
+      * @return 绑定对象
+      */
+     @Override
+     public IBinder onBind(Intent intent) {
+       // TODO: Return the communication channel to the service.
+       throw new UnsupportedOperationException("Not yet implemented");
+     }
+
+     /**
+      * 在每次服务启动的时候调用
+      *
+      * @param intent  意图
+      * @param flags   标识
+      * @param startId 启动码
+      * @return 整型
+      */
+     @Override
+     public int onStartCommand(Intent intent, int flags, int startId) {
+       return super.onStartCommand(intent, flags, startId);
+     }
+
+     /**
+      * 在服务销毁时调用
+      */
+     @Override
+     public void onDestroy() {
+       super.onDestroy();
+     }
+   }
+   ```
+
+2. 功能清单中注册
+
+   ```java
+   <service
+     android:name=".chapter10.FirstService"
+     android:enabled="true"
+     android:exported="true" />
+   ```
+
+3. 启动与停止
+
+   * 启动
+
+     ```java
+     Intent startIntent = new Intent(this, FirstService.class);// 意图指定服务
+     startService(startIntent);// 启动服务
+     ```
+
+   * 停止
+
+     ```java
+     Intent stopIntent = new Intent(this, FirstService.class);// 意图指定服务
+     stopService(stopIntent);// 停止服务
+     ```
+
+   * 注意
+
+     * 调用 `Context` 类中的 `startService()` 方法和 `stopService()` 方法进行启动和停止
+     * 完全由 Activity 进行控制，服务本身有一个 ` stopSelf()` 方法可以停止服务
+
+4. 打印日志
+
+   ```java
+   // 点击启动
+   E/JustDo23: FirstService --> onCreate()
+   E/JustDo23: FirstService --> onStartCommand()
+   // 再次点击启动
+   E/JustDo23: FirstService --> onStartCommand()
+   // 再次点击启动
+   E/JustDo23: FirstService --> onStartCommand()
+   // 点击停止
+   E/JustDo23: FirstService --> onDestroy()
+   ```
+
+   * `onCreate()` 方法是在服务**第一次创建**的时候调用
+   * `onStartCommande()` 方法则在**每次启动**服务的时候都会调用
+
+### 07. Activity 与 Service 进行通信
+
+1. 使用 Binder
+
+   ```java
+   public class FirstService extends Service {
+
+     private DownloadBinder downloadBinder = new DownloadBinder();
+
+     @Override
+     public IBinder onBind(Intent intent) {
+       LogUtils.e("FirstService --> onBind()");
+       return downloadBinder;
+     }
+
+     /**
+      * 使用 Binder 机制
+      *
+      * @since 2017年08月04日
+      */
+     class DownloadBinder extends Binder {
+
+       public void startDownload() {
+         LogUtils.e("DownloadBinder --> startDownload()");
+       }
+
+       public int getProgress() {
+         LogUtils.e("DownloadBinder --> getProgress()");
+         return 0;
+       }
+
+     }
+
+   }
+   ```
+
+2. 获取 Binder
+
+   ```java
+   public class FirstServiceActivity extends BaseActivity {
+
+     private FirstService.DownloadBinder downloadBinder;
+
+     /**
+      * 服务连接对象
+      */
+     private ServiceConnection serviceConnection = new ServiceConnection() {
+
+       /**
+        * 服务连接回调
+        */
+       @Override
+       public void onServiceConnected(ComponentName name, IBinder service) {
+         downloadBinder = (FirstService.DownloadBinder) service;
+         downloadBinder.startDownload();
+         downloadBinder.getProgress();
+       }
+
+       /**
+        * 服务断开连接回调
+        */
+       @Override
+       public void onServiceDisconnected(ComponentName name) {
+
+       }
+     };
+
+   }
+   ```
+
+3. 绑定与解绑
+
+   * 绑定
+
+     ```java
+     Intent bindIntent = new Intent(this, FirstService.class);// 意图指定服务
+     bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);// 绑定服务[标志位表示活动和服务进行绑定之后自动创建服务]
+     ```
+
+   * 解绑
+
+     ```java
+     unbindService(serviceConnection);// 解绑服务[停止服务]
+     ```
+
+4. 打印日志
+
+   ```java
+   // 点击绑定
+   E/JustDo23: FirstService --> onCreate()
+   E/JustDo23: FirstService --> onBind()
+   E/JustDo23: DownloadBinder --> startDownload()
+   E/JustDo23: DownloadBinder --> getProgress()
+   // 点击解绑绑
+   E/JustDo23: FirstService --> onDestroy()
+   ```
+
+   * 进行**绑定**服务时传递的**标志位**需要**注意**会**影响生命周期**函数
+   * 这里 **`BIND_AUTO_CREATE`** 标志位在绑定时**执行**了 **`onCreate()`** 方法而**不执行**上边 **`onStartCommande()`** 方法
+   * 一旦绑定成功，再次进行绑定就不会执行任何方法
+   * **解绑**之后活动随即会被**销毁**
+   * 任何一个服务在整个应用程序范围内都是通用的，可以和任何一个活动进行绑定，获得相同的 Binder 对象。
+
+### 08. 服务生命周期
+
+1. 生命周期图
+
+   ![ServiceLifecycle](http://osxmqydw4.bkt.clouddn.com/service_lifecycle.png)
+
+2. 生命周期整理
+
+   * 在**任何**位置调用 **`Context`** 的 **`startService()`** 方法，服务**启动**并回调 **`onStartCommand()`** 方法。如果服务之前**没有创建**则 **`onCreate()`** 方法**先**于 `onStartCommand()` 方法。服务启动后便会**一直保持运行状态**，虽然每次调用 `startService()` 方法后都会回调 `onStartCommand()` 方法，但实际上服务**只会存在一个实例**。因此，只需调用**一**次 **`stopService()`** 方法或 **`stopSelf()`** 方法，服务就会**停止**。
+   * 调用 **`Context`** 的 **`bindService()`** 方法获取一个服务的**持久连接**，并回调 **`onBind()`** 方法。类似地，如果服务之前**没有创建**则 **`onCreate()`** 方法**先**于 `onbind()` 方法。之后调用方获取 **IBinder** 对象可以用于**通信**。如果再次绑定**不会**回调 `onCreate()` 和 `onbind()` 方法。只要调用方和服务之间的连接**没有断开**，服务就**一直保持运行状态**。
+   * 当调用 **`startService()`** 方法启动服务时，则调用 **`stopService()`** 方法来停止并销毁服务。当调用 **`bindService()`** 方法绑定并启动服务时，则调用 **` unbindService()`** 方法来解绑并停止并销毁服务。如果对一个服务既调用了 **`startService()`** 方法又调用了 **`bindService()`** 方法，那如何销毁服务？根据 Android 系统的机制，一个服务只要被启动或者被绑定之后，就会一直处于运行状态，必须要让以上两种条件同时满足才能销毁服务。因此这种情况下需要同时调用 **`stopService()`** 方法和 **` unbindService()`** 方法，**`onDestroy`** 方法才会执行。
+
+### 09. 服务的更多技巧
+
+1. 前台服务
+
+   * 后台服务的系统**优先级**比较低，当系统**内存不足**的情况下，有可能会**回收掉**正在后台运行的服务。
+   * **前台服务**和**普通服务**最大的**区别**在于，它会一直有一个**正在运行的图标**在系统的**状态栏**显示，**下拉**可以看到更加详细的信息。
+
+   ```java
+   public class ForegroundService extends Service {
+
+     @Override
+     public void onCreate() {
+       super.onCreate();// 构建一个通知
+       Intent intent = new Intent(this, MainActivity.class);
+       PendingIntent pendingIntent = PendingIntent.getActivity(this, 23, intent, 0);
+       Notification notification = new NotificationCompat.Builder(this)
+           .setContentTitle("ForegroundService")
+           .setContentText("This the foreground service")
+           .setWhen(System.currentTimeMillis())
+           .setSmallIcon(R.mipmap.ic_launcher)
+           .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_mountain))
+           .setContentIntent(pendingIntent)
+           .build();
+       startForeground(22, notification);// 前台运行服务
+     }
+
+   }
+   ```
+
+   * 前台服务需要创建一个**通知**
+   * 调用 **`startForeground()`** 方法设置前台
+
+2. IntentService
+
+   * 服务中的代码**默认**运行在**主线程**中，因此**不能直接**在服务中执行**耗时操作**而需要**多线程**技术，**线程停止**需要**杀死服务**。为了简单地创建一个**异步的且会自动停止**的服务，Android 中提供了 **IntentService** 类。
+
+   ```java
+   public class FirstIntentService extends IntentService {
+
+     public FirstIntentService() {
+       super("FirstIntentService");// 父类含参构造。参数用来命名工作线程。
+     }
+
+     /**
+      * 运行在子线程中，运行结束后销毁服务。每次只处理一个 Intent。
+      *
+      * @param intent 意图
+      */
+     @Override
+     protected void onHandleIntent(Intent intent) {
+       LogUtils.e("FirstIntentService --> onHandleIntent()");
+       LogUtils.e("FirstIntentService --> Thread id is " + Thread.currentThread().getId());
+       LogUtils.e("FirstIntentService --> Thread name is " + Thread.currentThread().getName());
+     }
+
+     @Override
+     public void onDestroy() {
+       super.onDestroy();
+       LogUtils.e("FirstIntentService --> onDestroy()");
+     }
+
+   }
+   ```
+
+   * 需要注意**构造方法**必须要**调用父类构造**传递当前线程的**名称**
+   * 在 `onHandleIntent()` 方法中执行具体的逻辑，运行于子线程。
+   * **IntentService** 集开启线程和自动停止服务于一身。
+
+### 10. 最佳实践
+
+1. 完整的下载案例
+2. 接口回调
+3. 状态封装，每次写入数据是判断状态。
+4. 通过一次网络请求获取文件的大小。
+5. 通过设置网络请求头实现断点续传，写入文件时先跳过已下载的字节。
+6. 注意文件路径的使用，取消则删除文件。
+7. 同时调用 `startService()` 和 `bindService()` 方法来启动和绑定服务。这一点至关重要，因为启动服务可以保证服务一直在后台运行，绑定服务则可以让活动与服务进行通信。
+8. 活动销毁同时需要进行服务的解绑，不然可能会造成内存泄露。
+
+### 11. 小结
+
+1. 定时关机与开机的功能如何实现。
+2. Android 中的线程需要更加深入了解。
+3. 主线程的一些运行机制及原理需要了解。
+4. 编程思想。
+5. 更多实践。
 
 
 
