@@ -12,6 +12,8 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.MapView;
 import com.just.first.R;
 import com.just.first.base.BaseActivity;
 import com.just.first.utils.LogUtils;
@@ -29,6 +31,7 @@ import java.util.List;
 public class LBSActivity extends BaseActivity {
 
   private TextView tv_position;// 位置结果
+  private MapView mapView;
 
   private LocationClient locationClient;// 百度定位客户端
 
@@ -37,8 +40,10 @@ public class LBSActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     locationClient = new LocationClient(getApplicationContext());// 实例化百度定位
     locationClient.registerLocationListener(new MyLocationListener());// 注册监听回调
+    SDKInitializer.initialize(getApplicationContext());// 初始化地图 SDK
     setContentView(R.layout.activity_lbs);// 设置显示布局
     tv_position = (TextView) findViewById(R.id.tv_position);// 找控件
+    mapView = (MapView) findViewById(R.id.mapView);// 找控件
     List<String> permissionList = new ArrayList<>();// 权限集合
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {// 位置权限
       permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);// 加入待申请集合
@@ -72,14 +77,10 @@ public class LBSActivity extends BaseActivity {
     LocationClientOption locationClientOption = new LocationClientOption();// 获取操作对象
     locationClientOption.setScanSpan(5000);// 设置刷新时间差
     locationClientOption.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);// 默认模式
+    locationClientOption.setIsNeedAddress(true);// 需要详细的地址[获取详细地址信息需要使用网络]
     locationClient.setLocOption(locationClientOption);// 设置操作对象
   }
 
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    locationClient.stop();// 停止定位[避免耗电]
-  }
 
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -118,7 +119,12 @@ public class LBSActivity extends BaseActivity {
     public void onReceiveLocation(BDLocation bdLocation) {
       final StringBuilder currentPosition = new StringBuilder();
       currentPosition.append("纬度：").append(bdLocation.getLatitude()).append("\n");// 纬度
-      currentPosition.append("纬度：").append(bdLocation.getLongitude()).append("\n");// 纬度
+      currentPosition.append("经线：").append(bdLocation.getLongitude()).append("\n");// 经线
+      currentPosition.append("国家：").append(bdLocation.getCountry()).append("\n");// 国家
+      currentPosition.append("省：").append(bdLocation.getProvince()).append("\n");// 省
+      currentPosition.append("市：").append(bdLocation.getCity()).append("\n");// 市
+      currentPosition.append("区：").append(bdLocation.getDistrict()).append("\n");// 区
+      currentPosition.append("街道：").append(bdLocation.getStreet()).append("\n");// 街道
       currentPosition.append("定位方式：");
       if (bdLocation.getLocType() == BDLocation.TypeGpsLocation) {// GPS
         currentPosition.append("GPS");
@@ -146,6 +152,26 @@ public class LBSActivity extends BaseActivity {
       LogUtils.e("--> onConnectHotSpotMessage()" + " >> message = " + message + " >> what = " + what);
     }
 
+  }
+
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    mapView.onResume();
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    mapView.onPause();
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    locationClient.stop();// 停止定位[避免耗电]
+    mapView.onDestroy();
   }
 
 }
