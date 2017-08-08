@@ -13,7 +13,11 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.model.LatLng;
 import com.just.first.R;
 import com.just.first.base.BaseActivity;
 import com.just.first.utils.LogUtils;
@@ -31,9 +35,11 @@ import java.util.List;
 public class LBSActivity extends BaseActivity {
 
   private TextView tv_position;// 位置结果
-  private MapView mapView;
+  private MapView mapView;// 地图控件
+  private BaiduMap baiduMap;// 地图管理器
 
   private LocationClient locationClient;// 百度定位客户端
+  private boolean isFirstLocate = true;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,7 @@ public class LBSActivity extends BaseActivity {
     setContentView(R.layout.activity_lbs);// 设置显示布局
     tv_position = (TextView) findViewById(R.id.tv_position);// 找控件
     mapView = (MapView) findViewById(R.id.mapView);// 找控件
+    baiduMap = mapView.getMap();// 地图管理器
     List<String> permissionList = new ArrayList<>();// 权限集合
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {// 位置权限
       permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);// 加入待申请集合
@@ -139,6 +146,9 @@ public class LBSActivity extends BaseActivity {
           tv_position.setText(currentPosition.toString());// 界面更新
         }
       });
+      if (bdLocation.getLocType() == BDLocation.TypeGpsLocation || bdLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
+        navigateTo(bdLocation);// 移动到我的位置
+      }
     }
 
     /**
@@ -152,6 +162,21 @@ public class LBSActivity extends BaseActivity {
       LogUtils.e("--> onConnectHotSpotMessage()" + " >> message = " + message + " >> what = " + what);
     }
 
+  }
+
+
+  /**
+   * 地图移动到指定位置
+   */
+  private void navigateTo(BDLocation bdLocation) {
+    if (isFirstLocate) {
+      LatLng latLng = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());// [纬度][经度]
+      MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newLatLng(latLng);
+      baiduMap.animateMapStatus(mapStatusUpdate);// 设置移动到的位置
+      MapStatusUpdate zoomTo = MapStatusUpdateFactory.zoomTo(16.5f);
+      baiduMap.animateMapStatus(zoomTo);// 设置缩放等级[3-19]
+      isFirstLocate = false;// 移动一次就好了避免多少移动
+    }
   }
 
 
