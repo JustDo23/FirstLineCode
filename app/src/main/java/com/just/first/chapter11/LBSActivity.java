@@ -17,6 +17,7 @@ import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.just.first.R;
 import com.just.first.base.BaseActivity;
@@ -51,6 +52,7 @@ public class LBSActivity extends BaseActivity {
     tv_position = (TextView) findViewById(R.id.tv_position);// 找控件
     mapView = (MapView) findViewById(R.id.mapView);// 找控件
     baiduMap = mapView.getMap();// 地图管理器
+    baiduMap.setMyLocationEnabled(true);// 允许显示我的位置
     List<String> permissionList = new ArrayList<>();// 权限集合
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {// 位置权限
       permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);// 加入待申请集合
@@ -177,6 +179,11 @@ public class LBSActivity extends BaseActivity {
       baiduMap.animateMapStatus(zoomTo);// 设置缩放等级[3-19]
       isFirstLocate = false;// 移动一次就好了避免多少移动
     }
+    MyLocationData.Builder locationBuilder = new MyLocationData.Builder();
+    locationBuilder.latitude(bdLocation.getLatitude());// 纬度
+    locationBuilder.longitude(bdLocation.getLongitude());// 经度
+    MyLocationData myLocationData = locationBuilder.build();// 我的位置封装
+    baiduMap.setMyLocationData(myLocationData);// 显示我的位置
   }
 
 
@@ -197,6 +204,7 @@ public class LBSActivity extends BaseActivity {
     super.onDestroy();
     locationClient.stop();// 停止定位[避免耗电]
     mapView.onDestroy();
+    baiduMap.setMyLocationEnabled(false);// 销毁的时候禁止显示
   }
 
 }
