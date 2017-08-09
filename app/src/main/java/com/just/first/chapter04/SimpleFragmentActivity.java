@@ -1,5 +1,6 @@
 package com.just.first.chapter04;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +23,8 @@ public class SimpleFragmentActivity extends BaseActivity implements View.OnClick
   private Button bt_left;// 静态 Fragment 中的按钮
   private BottomFragment bottomFragment;// 底部的碎片
 
+  private Button bt_bottom;// Activity 中按钮点击弹出 Dialog
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     LogUtils.e(simpleName + " --> onCreate() 前");
@@ -31,6 +34,8 @@ public class SimpleFragmentActivity extends BaseActivity implements View.OnClick
 
     bt_left = (Button) findViewById(R.id.bt_left);
     bt_left.setOnClickListener(this);
+    bt_bottom = (Button) findViewById(R.id.bt_bottom);
+    bt_bottom.setOnClickListener(this);
 
     bottomFragment = new BottomFragment();
 
@@ -42,6 +47,9 @@ public class SimpleFragmentActivity extends BaseActivity implements View.OnClick
     switch (v.getId()) {
       case R.id.bt_left:
         replaceFragment(bottomFragment);
+        break;
+      case R.id.bt_bottom:
+        showsDialog();
         break;
     }
   }
@@ -98,4 +106,17 @@ public class SimpleFragmentActivity extends BaseActivity implements View.OnClick
     super.onDestroy();
     LogUtils.e(simpleName + " --> onDestroy()");
   }
+
+
+  /**
+   * 弹窗
+   */
+  private void showsDialog() {
+    new AlertDialog.Builder(this)
+        .setTitle("Activity Show Dialog")
+        .setMessage("This is message")
+        .create()
+        .show();
+  }
+
 }
