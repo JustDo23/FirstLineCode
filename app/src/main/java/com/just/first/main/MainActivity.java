@@ -51,6 +51,7 @@ import com.just.first.chapter10.IntentServiceActivity;
 import com.just.first.chapter10.UIReferenceActivity;
 import com.just.first.chapter10.download.DownloadActivity;
 import com.just.first.chapter11.LBSActivity;
+import com.just.first.chapter12.ToolbarActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
 import java.util.ArrayList;
@@ -74,7 +75,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    getSupportActionBar().hide();// 隐藏标题栏 getActionBar(); return null
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().hide();// 隐藏标题栏 getActionBar(); return null
+    }
     initData();
     rv_chapters = (RecyclerView) findViewById(R.id.rv_chapters);
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);// 线性布局管理器
@@ -132,6 +135,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("10.5.2 IntentService");
     chapterList.add("10.6.3 文件下载");
     chapterList.add("11.3.2 百度定位");
+    chapterList.add("12.1.2 Toolbar 使用");
 
     chapterList.add("----------");
 
@@ -270,6 +274,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "11.3.2 百度定位":
         startActivity(new Intent(this, LBSActivity.class));
+        break;
+      case "12.1.2 Toolbar 使用":
+        startActivity(new Intent(this, ToolbarActivity.class));
         break;
 
       case "定时任务 Alarm 机制":
