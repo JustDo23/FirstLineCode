@@ -39,6 +39,8 @@ dependencies {// 依赖库 [本地依赖][库依赖][远程依赖]
   // Gradle 在构建项目时会首先检查一下本地是否已经有这个库的缓存，如果没有的话则会去自动联网下载，然后再添加到项目的构建路径当中。
 
   compile 'com.android.support:percent:25.3.1'// 百分比布局
+  compile 'com.android.support:design:25.3.1'// Material Design
+  compile 'de.hdodenhof:circleimageview:2.1.0'// 圆形 ImageView
   compile 'org.litepal.android:core:1.5.1'// LitePal 数据库
   compile 'com.squareup.okhttp3:okhttp:3.4.1'// OKHttp
   compile 'com.google.code.gson:gson:2.8.1'// Gson

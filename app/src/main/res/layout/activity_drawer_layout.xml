@@ -19,12 +19,20 @@
 
   </FrameLayout>
 
-  <TextView
+  <!-- <TextView
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:layout_gravity="start"
+     android:background="@android:color/white"
+     android:text="Menu"
+     android:textSize="30sp" />-->
+
+  <android.support.design.widget.NavigationView
+    android:id="@+id/navigationView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="@android:color/white"
-    android:text="Menu"
-    android:textSize="30sp" />
+    app:headerLayout="@layout/navigation_header"
+    app:menu="@menu/menu_navigation" />
 
 </android.support.v4.widget.DrawerLayout>
