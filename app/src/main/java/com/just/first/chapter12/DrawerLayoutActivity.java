@@ -2,15 +2,19 @@ package com.just.first.chapter12;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.just.first.R;
 import com.just.first.base.BaseActivity;
+import com.just.first.utils.ToastUtil;
 
 /**
  * 12.3.1 滑动菜单
@@ -22,6 +26,7 @@ public class DrawerLayoutActivity extends BaseActivity {
 
   private DrawerLayout drawerLayout;
   private NavigationView navigationView;
+  private FloatingActionButton floatingActionButton;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,22 @@ public class DrawerLayoutActivity extends BaseActivity {
       public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawers();
         return true;
+      }
+    });
+    floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+    floatingActionButton.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View view) {
+        Snackbar.make(view, "Data deleted", Snackbar.LENGTH_LONG)
+            .setAction("Undo", new View.OnClickListener() {
+
+              @Override
+              public void onClick(View v) {
+                ToastUtil.showShortToast(v.getContext(), "Data restored");
+              }
+            })
+            .show();
       }
     });
   }
