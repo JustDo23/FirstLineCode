@@ -52,6 +52,7 @@ import com.just.first.chapter10.UIReferenceActivity;
 import com.just.first.chapter10.download.DownloadActivity;
 import com.just.first.chapter11.LBSActivity;
 import com.just.first.chapter12.DrawerLayoutActivity;
+import com.just.first.chapter12.SwipeRefreshLayoutActivity;
 import com.just.first.chapter12.ToolbarActivity;
 import com.just.first.chapter13.AlarmActivityG;
 
@@ -138,6 +139,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("11.3.2 百度定位");
     chapterList.add("12.1.2 Toolbar 使用");
     chapterList.add("12.3.1 滑动菜单");
+    chapterList.add("12.6.1 下拉刷新");
 
     chapterList.add("----------");
 
@@ -282,6 +284,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "12.3.1 滑动菜单":
         startActivity(new Intent(this, DrawerLayoutActivity.class));
+        break;
+      case "12.6.1 下拉刷新":
+        startActivity(new Intent(this, SwipeRefreshLayoutActivity.class));
         break;
 
       case "定时任务 Alarm 机制":

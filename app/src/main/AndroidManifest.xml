@@ -98,6 +98,7 @@
     <activity
       android:name=".chapter12.DrawerLayoutActivity"
       android:theme="@style/FullScreen" />
+    <activity android:name=".chapter12.SwipeRefreshLayoutActivity" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 
