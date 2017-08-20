@@ -101,7 +101,7 @@
     <activity android:name=".chapter12.SwipeRefreshLayoutActivity" />
     <activity
       android:name=".chapter12.CollapsingToolbarLayoutActivity"
-      android:theme="@style/FullScreen" />
+      android:theme="@style/StatusBarTheme" />
     <activity android:name=".chapter13.AlarmActivity" />
     <activity android:name=".chapter13.AlarmActivityG" />
 

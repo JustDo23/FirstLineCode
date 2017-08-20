@@ -12,6 +12,8 @@
   <style name="FullScreen" parent="Theme.AppCompat.Light.NoActionBar" />
 
   <!-- 状态栏 -->
-  <style name="StatusBarTheme" parent="FullScreen" />
+  <style name="StatusBarTheme" parent="FullScreen">
+    <item name="android:statusBarColor">@android:color/transparent</item>
+  </style>
 
 </resources>
