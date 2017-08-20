@@ -8,6 +8,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +17,9 @@ import android.view.View;
 import com.just.first.R;
 import com.just.first.base.BaseActivity;
 import com.just.first.utils.ToastUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 12.3.1 滑动菜单
@@ -27,6 +32,10 @@ public class DrawerLayoutActivity extends BaseActivity {
   private DrawerLayout drawerLayout;
   private NavigationView navigationView;
   private FloatingActionButton floatingActionButton;
+
+  private RecyclerView recyclerView;
+  private List<Car> carList = new ArrayList<>();
+  private CarAdapter carAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +76,12 @@ public class DrawerLayoutActivity extends BaseActivity {
             .show();
       }
     });
+    recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+    GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+    recyclerView.setLayoutManager(gridLayoutManager);
+    initCar();
   }
+
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
@@ -77,6 +91,15 @@ public class DrawerLayoutActivity extends BaseActivity {
         break;
     }
     return true;
+  }
+
+
+  private void initCar() {
+    for (int i = 0; i < 25; i++) {
+      carList.add(new Car("Car " + i, R.mipmap.ic_orange));
+    }
+    carAdapter = new CarAdapter(this, carList);
+    recyclerView.setAdapter(carAdapter);
   }
 
 }
