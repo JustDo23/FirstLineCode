@@ -3547,6 +3547,709 @@ android:textAllCaps="false"
 
 
 
+## 第 12 章 Material Design
+
+### 01. 简介
+
+Material Design 是由谷歌的设计工程师**基于**传统的优秀的设计原则，**结合**丰富的创意和科学技术所发明的一套全新的**界面设计语言**。
+
+### 02. Toolbar
+
+1. 主题
+
+   ```xml
+   <!-- Base application theme. -->
+     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+       <!-- Customize your theme here. -->
+       <item name="colorPrimary">@color/colorPrimary</item>
+       <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+       <item name="colorAccent">@color/colorAccent</item>
+     </style>
+   ```
+
+   * 主题 **`Theme.AppCompat.Light.DarkActionBar`** 是一个**带**有 **`ActionBar`** 的**深色**主题。
+   * 主题 **`Theme.AppCompat.NoActionBar`** 是一个**不带**有 **`ActionBar`** 的**深色**主题，它会将界面的**主体**颜色设成**深色**，**陪衬**颜色设成**浅色**。
+   * 主题 **`Theme.AppCompat.Light.NoActionBar`** 是一个**不带**有 **`ActionBar`** 的**浅色**主题，它会将界面的**主体**颜色设成**浅色**，**陪衬**颜色设成**深色**。
+
+2. 颜色
+
+![ThemeColors](http://osxmqydw4.bkt.clouddn.com/ThemeColors.png)
+
+3. 属性
+
+   * 属性 **`colorAccent`** 不只是用来指定一个按钮的颜色，而是更多的表达了一个强调的意思，比如一个控件的选中状态也会使用 **`colorAccent`** 的颜色。
+
+4. 布局
+
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+
+     <android.support.v7.widget.Toolbar
+       android:id="@+id/toolbar"
+       android:layout_width="match_parent"
+       android:layout_height="?attr/actionBarSize"
+       android:background="@color/colorPrimary"
+       android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+       app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+   </FrameLayout>
+   ```
+
+   * 使用 **`xmlns:app`** 指定一个命名空间之后可以使用 **`app:attribute`** 之指定相关的属性。
+   * **全局**主题是**淡色**主题，因此 **Toolbar** 是**淡色**但**其上面**的各种**元素**会自动使用**深色**，这是为了和主体颜色**区别开**。
+   * **局部**使用 `android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"` 指定 **Toolbar** 单独使用**深色主题**。
+   * 使用 `app:popupTheme="@style/ThemeOverlay.AppCompat.Light"` 指定弹出**菜单**为**淡色主题**。
+
+5. 使用
+
+   ```java
+   public class ToolbarActivity extends BaseActivity {
+
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       setContentView(R.layout.activity_toolbar);
+       Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);// 找控件
+       toolbar.setTitle("JJFly");// 修改标题
+       setSupportActionBar(toolbar);// 设置
+     }
+   }
+   ```
+
+6. 修改标题
+
+   * 方式一
+
+     功能清单中添加标签属性
+
+     ```java
+     android:label="Just"
+     ```
+
+   * 方式二
+
+     ```java
+     toolbar.setTitle("JJFly");// 修改标题
+     ```
+
+7. 添加菜单
+
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <menu xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+     <item
+       android:id="@+id/menu_backup"
+       android:icon="@mipmap/ic_backup"
+       android:title="Backup"
+       app:showAsAction="always" />
+
+     <item
+       android:id="@+id/menu_delete"
+       android:icon="@mipmap/ic_delete"
+       android:title="Delete"
+       app:showAsAction="ifRoom" />
+
+     <item
+       android:id="@+id/menu_settings"
+       android:icon="@mipmap/ic_settings"
+       android:title="Settings"
+       app:showAsAction="never" />
+
+   </menu>
+   ```
+
+   * 使用属性 **`app:showAsAction`** 来指定按钮的显示位置
+     * 值 **`always`** 表示**永远显示**在 **Toolbar** 中，如果**空间不够则不显示**
+     * 值 **`ifRoom`** 表示空间**足够则显示**在 **Toolbar** 中，空间**不够则不显示**
+     * 值 **`never`** 表示**永远显示在菜单中**，不在 **Toolbar** 显示
+
+8. 显示及事件
+
+   ```java
+   @Override
+   public boolean onCreateOptionsMenu(Menu menu) {
+     getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+     return true;
+   }
+
+   @Override
+   public boolean onOptionsItemSelected(MenuItem item) {
+     switch (item.getItemId()) {
+       case R.id.menu_backup:
+         ToastUtil.showShortToast(this, "Click Backup");
+         break;
+       case R.id.menu_delete:
+         ToastUtil.showShortToast(this, "Click Delete");
+         break;
+       case R.id.menu_settings:
+         ToastUtil.showShortToast(this, "Click Settings");
+         break;
+     }
+     return true;
+   }
+   ```
+
+### 03. 滑动菜单
+
+1. DrawerLayout
+
+   * 首先它是一个**布局**，在布局中允许放入**两**个**直接子控件**
+   * 第**一**个**子控件**是**主屏幕**中显示的内容
+   * 第**二**个**子控件**是滑动**菜单**中显示的内容
+
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:id="@+id/drawerLayout"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+
+   </android.support.v4.widget.DrawerLayout>
+   ```
+
+   * 第**二**个**子控件**中必须手动指定 **`android:layout_gravity="start"`** 属性来指定告诉 **`DrawerLayout`** 滑动菜单是在屏幕的左边还是右边。
+
+2. 代码控制菜单
+
+   ```java
+   public class DrawerLayoutActivity extends BaseActivity {
+
+     private DrawerLayout drawerLayout;
+
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       setContentView(R.layout.activity_drawer_layout);
+       Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);// 找控件
+       toolbar.setTitle("DrawerLayout");// 修改标题
+       setSupportActionBar(toolbar);// 设置
+       drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+       ActionBar actionBar = getSupportActionBar();// 获取相应的 toolbar
+       if (actionBar != null) {
+         actionBar.setDisplayHomeAsUpEnabled(true);// 允许导航按钮显示
+         actionBar.setHomeAsUpIndicator(R.mipmap.ic_menu);// 设置导航按钮的图标
+       }
+     }
+
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+       switch (item.getItemId()) {
+         case android.R.id.home:// 处理点击事件
+           drawerLayout.openDrawer(GravityCompat.START);// 打开菜单
+           break;
+       }
+       return true;
+     }
+
+   }
+   ```
+
+3. NavigationView
+
+   * 导入依赖库
+
+     ```groovy
+     compile 'com.android.support:design:25.3.1'// Material Design
+     compile 'de.hdodenhof:circleimageview:2.1.0'// 圆形 ImageView
+     ```
+
+4. 菜单项
+
+   * 菜单分组
+
+     ```xml
+     <?xml version="1.0" encoding="utf-8"?>
+     <menu xmlns:android="http://schemas.android.com/apk/res/android">
+       <group android:checkableBehavior="single">
+         <item
+           android:id="@+id/menu_nav_call"
+           android:icon="@mipmap/nav_call"
+           android:title="Call" />
+       </group>
+     </menu>
+     ```
+
+     * 使用 **`<group>`** 标签进行分组
+     * 使用 **`android:checkableBehavior="single"`** 属性指定行为
+       * `single` 表示组中所有菜单项只能单选
+       * `all` 表示组中所有菜单项都能选中
+       * `none` 表示组中所有菜单项都不能选中
+
+5. 头部布局
+
+   * 头部布局可以随意定制
+
+     ```xml
+     <?xml version="1.0" encoding="utf-8"?>
+     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="180dp"
+       android:background="?attr/colorPrimary"
+       android:padding="10dp">
+
+       <de.hdodenhof.circleimageview.CircleImageView
+         android:id="@+id/civ_head"
+         android:layout_width="70dp"
+         android:layout_height="70dp"
+         android:layout_centerInParent="true"
+         android:src="@mipmap/nav_icon" />
+
+     </RelativeLayout>
+     ```
+
+     * 固定高度 `180dp` 是一个比较适合的高度
+
+6. 使用 NavigationView
+
+   * 将 `DrawerLayout` 第二个子控件指定为 `NavigationView`
+
+     ```xml
+     <android.support.design.widget.NavigationView
+       android:id="@+id/navigationView"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:layout_gravity="start"
+       app:headerLayout="@layout/navigation_header"
+       app:menu="@menu/menu_navigation" />
+     ```
+
+   * 使用 **`app:headerLayout`** 属性指定想要的头部布局
+   * 使用 **`app:menu`** 属性指定显示的菜单
+
+7. 代码控制
+
+   ```java
+   navigationView = (NavigationView) findViewById(R.id.navigationView);// 找控件
+   navigationView.setCheckedItem(R.id.menu_nav_call);// 设置选中
+   navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {// 设置菜单选中监听
+
+     @Override
+     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+       drawerLayout.closeDrawers();
+       return true;
+     }
+   });
+   ```
+
+### 04. FloatingActionButton
+
+1. 悬浮按钮 FloatingActionButton
+
+   ```xml
+   <android.support.design.widget.FloatingActionButton
+     android:id="@+id/floatingActionButton"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_gravity="bottom|end"
+     android:layout_margin="16dp"
+     android:src="@mipmap/ic_done"
+     app:elevation="8dp" />
+   ```
+
+2. 属性
+
+   * 控件 **`FloatingActionButton`** 默认使用 **`colorAccent`** 来作为按钮的颜色
+   * 属性 **`app:elevation`** 指定按钮的**高度**，高度**值越大**投影**范围越大**投影**效果越淡**，高度**值越小**投影**范围越小**投影**效果越浓**。
+
+### 05. Snackbar
+
+1. 简介
+
+   * **`Snackbar`** 并不是 **`Toast`** 的替代品
+     * **`Toast`** 只能告诉用户现在发生了什么事情，无法进行交互。
+     * **`Snackbar`** 告诉用户的同时可以在提示中添加一个可交互的按钮
+
+2. Snackbar
+
+   ```java
+   floatingActionButton.setOnClickListener(new View.OnClickListener() {
+
+     @Override
+     public void onClick(View view) {
+       Snackbar.make(view, "Data deleted", Snackbar.LENGTH_LONG)
+           .setAction("Undo", new View.OnClickListener() {
+
+             @Override
+             public void onClick(View v) {
+               ToastUtil.showShortToast(v.getContext(), "Data restored");
+             }
+           })
+           .show();
+     }
+   });
+   ```
+
+3. 方法
+
+   * **`make(View view, CharSequence text, int duration)`** 方法创建控件
+     * 第一个参数是当前界面布局中任意一个 View 都可以，利用它自动查找最外层布局
+     * 第二个参数为提示信息
+     * 第三个参数指定显示时长
+   * **`setAction(CharSequence text, final View.OnClickListener listener)`** 方法添加交互按钮
+     * 第一个参数为交互按钮文本
+     * 第二个参数为交互的点击事件
+
+### 06. CoordinatorLayout
+
+1. 简介
+
+   * **`CoordinatorLayout`** 是一个**加强版**的 **`FrameLayout`**
+   * `CoordinatorLayout` 可以**监听**其**所有子控件**的各种**事件**，然后**自动**做出最为**合理**的**响应**。
+
+2. 替换 `FrameLayout`
+
+   ```xml
+   <android.support.design.widget.CoordinatorLayout
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+
+   </android.support.design.widget.CoordinatorLayout>
+   ```
+
+3. 解决遮挡问题
+
+   首先 `CoordinatorLayout` 可以监听其所有子控件的各种事件，但是 **`Snackbar`** 好像**并不是** `CoordinatorLayout` 的子控件，为什么它却可以被监听？
+
+   其实道理很简单，在 `Snackbar` 的 **`make()`** 方法中传入的**第一个参数**，就指定了 `Snackbar` 是**基于**哪个 `View` 来**触发**的，传递的 `FloatingActionButton` 是 `CoordinatorLayout` 的子控件，因此这个事件就理所应当能被监听到了。
+
+### 07. CardView
+
+1. 添加依赖库
+
+   ```groovy
+   compile 'com.android.support:cardview-v7:25.3.1'// 卡片式布局
+   ```
+
+2. 卡片式布局 CardView
+
+   ```xml
+   <android.support.v7.widget.CardView
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:id="@+id/cardView"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:layout_margin="10dp"
+     app:cardCornerRadius="8dp"
+     app:cardElevation="8dp">
+
+   </android.support.v7.widget.CardView>
+   ```
+
+   * 属性 **`app:cardCornerRadius`** 指定卡片布局的**圆角度数**
+   * 属性 **`app:cardElevation`** 指定卡片布局的**高度**
+
+### 08. AppBarLayout
+
+1. 问题产生
+
+   * 出现问题是 **`RecycleView`** 将 **`Toolbar`** **遮挡**。之前提到 **`CoordinatorLayout`** 是一个加强版的 **`FrameLayout`** 但其**并非直接继承**自 `FrameLayout` 而**是直接**继承 **`ViewGroup`** 的，因而所有子控件在不进行明确定位的情况下，默认都摆放在布局的左上角，从而产生遮挡问题。
+   * 布局 **`AppBarLayout`** 实际上是一个**垂直方向**的 **`LinearLayout`** 它在内部做了很多**滚动事件**的**封装**。
+
+2. 问题解决
+
+   * 将 **`Toolbar`** **嵌套**到 **`AppBarLayout`** 中
+   * 给 `RecycleView` 指定一个**布局行为**
+
+3. AppBarLayout
+
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:id="@+id/drawerLayout"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+
+     <android.support.design.widget.CoordinatorLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+       <android.support.design.widget.AppBarLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content">
+
+         <android.support.v7.widget.Toolbar
+           android:id="@+id/toolbar"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           android:background="@color/colorPrimary"
+           app:layout_scrollFlags="scroll|enterAlways|snap"
+           app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+       </android.support.design.widget.AppBarLayout>
+
+       <android.support.v7.widget.RecyclerView
+         android:id="@+id/recyclerView"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+     </android.support.design.widget.CoordinatorLayout>
+
+   </android.support.v4.widget.DrawerLayout>
+   ```
+
+4. 属性
+
+   * 属性 **`app:layout_behavior`** 指定一个**布局行为**
+   * 属性 **`app:layout_scrollFlags`** 指定当 `AppBarLayout` **接收到滚动事件**时候，它**内部**的**子控件**行为。
+     * 值 **`scroll`** 表示 `RecyclerView` **向上**滚动时 `Toolbar` 会跟着**一起向上**滚动并**实现隐藏**。
+     * 值 **`enterAlways`** 表示 `RecyclerView` **向下**滚动时 `Toolbar` 会跟着**一起向下**滚动并**重新显示**。
+     * 值 **`snap`** 表示当 `Toolbar` 还**没有完全隐藏或显示**的时候会**根据当前滚动的距离自动选择是隐藏还是显示**。
+
+### 09. SwipeRefreshLayout
+
+1. 包裹需要刷新控件
+
+   ```xml
+   <android.support.v4.widget.SwipeRefreshLayout
+     android:id="@+id/srl_car"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+
+     <android.support.v7.widget.RecyclerView
+       android:id="@+id/rv_car"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent" />
+
+   </android.support.v4.widget.SwipeRefreshLayout>
+   ```
+
+2. 设置刷新监听等
+
+   ```java
+   @Override
+   protected void onCreate(Bundle savedInstanceState) {
+     srl_car = (SwipeRefreshLayout) findViewById(R.id.srl_car);// 找控件
+     srl_car.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);// 设置颜色
+     srl_car.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {// 刷新监听
+
+       @Override
+       public void onRefresh() {// 主线程
+         refreshCars();
+       }
+     });
+   }
+
+   private void refreshCars() {
+     new Thread(new Runnable() {
+
+       @Override
+       public void run() {
+         try {
+           Thread.sleep(6000);
+         } catch (InterruptedException e) {
+           e.printStackTrace();
+         }
+         runOnUiThread(new Runnable() {
+
+           @Override
+           public void run() {
+             ToastUtil.showShortToast(SwipeRefreshLayoutActivity.this, "Refresh Success");
+             srl_car.setRefreshing(false);// 停止刷新
+           }
+         });
+       }
+     }).start();
+   }
+   ```
+
+### 10. CollapsingToolbarLayout
+
+1. 可折叠式标题栏
+
+   * 注意 **`CollapsingToolbarLayout`** 是不能独立存在的，只能作为 **`AppBarLayout`** 的直接子布局使用。
+   * 同时 **`AppBarLayout`** 又必须是 **`CoordinatorLayout`** 的子布局。
+   * 其实 **`CollapsingToolbarLayout`** 在折叠之后就是一个普通的 **`Toolbar`** 。
+
+2. 使用方法
+
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+
+     <android.support.design.widget.AppBarLayout
+       android:id="@+id/appBarLayout"
+       android:layout_width="match_parent"
+       android:layout_height="230dp">
+
+       <android.support.design.widget.CollapsingToolbarLayout
+         android:id="@+id/collapsingToolbarLayout"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+         app:contentScrim="@color/colorPrimary"
+         app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+         <ImageView
+           android:id="@+id/iv_hide"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:scaleType="centerCrop"
+           app:layout_collapseMode="parallax" />
+
+         <android.support.v7.widget.Toolbar
+           android:id="@+id/toolbar"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           app:layout_collapseMode="pin" />
+
+       </android.support.design.widget.CollapsingToolbarLayout>
+
+     </android.support.design.widget.AppBarLayout>
+
+     <android.support.v4.widget.NestedScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+       <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="vertical">
+
+         <android.support.v7.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginBottom="15dp"
+           android:layout_marginLeft="15dp"
+           android:layout_marginRight="15dp"
+           android:layout_marginTop="35dp"
+           app:cardCornerRadius="8dp">
+
+           <TextView
+             android:id="@+id/tv_content"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_margin="10dp" />
+
+         </android.support.v7.widget.CardView>
+
+       </LinearLayout>
+
+     </android.support.v4.widget.NestedScrollView>
+
+     <android.support.design.widget.FloatingActionButton
+       android:id="@+id/fab_content"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_margin="16dp"
+       android:src="@mipmap/ic_comment"
+       app:layout_anchor="@id/appBarLayout"
+       app:layout_anchorGravity="bottom|end" />
+
+   </android.support.design.widget.CoordinatorLayout>
+   ```
+
+3. 属性
+
+   * 属性 **`app:contentScrim`** 用于指定 **`CollapsingToolbarLayout`** 在趋于折叠状态以及折叠之后的背景颜色。
+   * 属性 **`app:layout_scrollFlags`** 用于指定 `AppBarLayout` **接收到滚动事件**时候，它**内部**的**子控件**行为。
+     * 值 **`scroll`** 表示 `CollapsingToolbarLayout` 随着滚动一起滚动。
+     * 值 **`exitUntilCollapsed`** 表示当 `CollapsingToolbarLayout` 随着滚动完成折叠之后就保留在界面上，不再移出屏幕。
+   * 属性 **`app:layout_collapseMode`** 用于指定**当前控件**在 `CollapsingToolbarLayout` 折叠**过程中**的**折叠模式**
+     * 值 **`pin`** 表示在折叠的过程中**位置始终保持不变**
+     * 值 **`parallax`** 表示在折叠的过程中**产生一定的错位偏移**
+   * 属性 **`app:layout_anchor`** 指定了一个锚点
+   * 属性 **`app:layout_anchorGravity`** 指定了悬浮按钮的位置
+
+4. NestedScrollView
+
+   * 可以认为 **`NestedScrollView`** 是一个**加强版**的 **`ScrollView`**
+   * 内部增加了嵌套响应滚动事件的功能
+   * 类似 **`ScrollView`** 他们的内部都只允许存在一个直接子布局
+
+5. 界面
+
+   ```java
+   /**
+    * 12.7.1 可折叠式标题栏
+    *
+    * @since 2017年08月20日
+    */
+   public class CollapsingToolbarLayoutActivity extends AppCompatActivity {
+
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       setContentView(R.layout.activity_collapsing_toolbar_layout);
+       // 可折叠标题栏
+       CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+       collapsingToolbarLayout.setTitle("Fruit Detail");// 设置标题
+       // 图片
+       ImageView iv_hide = (ImageView) findViewById(R.id.iv_hide);
+       Glide.with(this).load(R.mipmap.ic_orange).into(iv_hide);
+       // Toolbar
+       Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+       setSupportActionBar(toolbar);
+       ActionBar actionBar = getSupportActionBar();
+       if (actionBar != null) {
+         actionBar.setDisplayHomeAsUpEnabled(true);
+       }
+       // 内容详情
+       TextView tv_content = (TextView) findViewById(R.id.tv_content);
+       tv_content.setText("orange");
+     }
+
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+       switch (item.getItemId()) {
+         case android.R.id.home:
+           finish();
+           break;
+       }
+       return true;
+     }
+   }
+   ```
+
+### 11. 充分利用系统状态栏空间
+
+1. 只能在 Android 5.0 系统及之后的系统进行设置。
+
+2. 借助属性 **`android:fitsSystemWindows="true"`** 指定控件会出现在系统状态里。
+
+   * 之前示例需要将 ImageView 及**其所有父布局**都设置上这个属性。
+
+3. 在主题中将状态栏颜色指定成透明颜色
+
+   * 创建 `values-v21` 文件夹及 `styles.xml` 文件
+   * 指定属性 `android:statusBarColor` 为透明颜色
+
+     ```xml
+     <!-- 状态栏 -->
+     <style name="StatusBarTheme" parent="FullScreen">
+       <item name="android:statusBarColor">@android:color/transparent</item>
+     </style>
+     ```
+
+   * 文件 `res/values/styles.xml` 中不需要指定属性
+
+### 12. 小结
+
+1. 对 Material Design 中的新控件多尝试多练习。
+2. 了解 Material Design 的设计思维和设计理念。
+   * [https://material.google.com](https://material.google.com)
+   * [https://material.io](https://material.io)
+
+
+
+
+
+
+
+
+
 ## 第 13 章 继续进阶
 
 ### 01. 创建定时任务
