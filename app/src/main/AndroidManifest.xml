@@ -103,11 +103,6 @@
       android:name=".chapter12.CollapsingToolbarLayoutActivity"
       android:theme="@style/StatusBarTheme" />
     <activity android:name=".chapter13.AlarmActivity" />
-    <activity android:name=".chapter13.AlarmActivityG" />
-
-    <service android:name=".chapter13.LongRunningService" />
-
-    <receiver android:name=".chapter13.AlarmReceiver" />
 
     <receiver
       android:name=".chapter05.BootCompleteReceiver"
@@ -170,6 +165,16 @@
       android:enabled="true"
       android:process=":remote" />
     <!-- 百度地图[End] -->
+
+    <service
+      android:name=".chapter13.LongRunningService"
+      android:enabled="true"
+      android:exported="true" />
+
+    <receiver
+      android:name=".chapter13.AlarmReceiver"
+      android:enabled="true"
+      android:exported="true" />
 
   </application>
 
