@@ -56,6 +56,7 @@ import com.just.first.chapter12.DrawerLayoutActivity;
 import com.just.first.chapter12.SwipeRefreshLayoutActivity;
 import com.just.first.chapter12.ToolbarActivity;
 import com.just.first.chapter13.AlarmActivity;
+import com.just.first.chapter13.MultiWindowActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,6 +144,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("12.6.1 下拉刷新");
     chapterList.add("12.7.1 可折叠式标题栏");
     chapterList.add("13.5.1 定时任务 Alarm 机制");
+    chapterList.add("13.6.2 多窗口生命周期");
   }
 
   @Override
@@ -293,6 +295,10 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
       case "13.5.1 定时任务 Alarm 机制":
         startActivity(new Intent(this, AlarmActivity.class));
         break;
+      case "13.6.2 多窗口生命周期":
+        startActivity(new Intent(this, MultiWindowActivity.class));
+        break;
     }
   }
+
 }
