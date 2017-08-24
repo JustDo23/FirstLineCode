@@ -108,6 +108,7 @@
       android:name=".chapter13.MultiWindowActivity"
       android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
       android:screenOrientation="portrait" />
+    <activity android:name=".chapter13.LambdaActivity" />
 
     <receiver
       android:name=".chapter05.BootCompleteReceiver"

@@ -12,6 +12,11 @@ android {
     versionCode 1// 项目版本号
     versionName "1.0"// 项目版本名称
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"// 测试需要
+    jackOptions.enabled = true;// 支持 Lambda 表达式
+  }
+  compileOptions {// 编译选项
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
   buildTypes {// 构建类型
     release {// 发布
