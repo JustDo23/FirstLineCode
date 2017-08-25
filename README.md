@@ -4246,16 +4246,436 @@ Material Design 是由谷歌的设计工程师**基于**传统的优秀的设计
 
 
 
+## 第 13 章 高级技巧
 
+### 01. 全局 Context
 
+```java
+public class FirstLineApplication extends Application {
 
+  private static Context context;
 
-## 第 13 章 继续进阶
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    context = getApplicationContext();
+  }
 
-### 01. 创建定时任务
+  public static Context getContext() {
+    return context;
+  }
 
-1. 实现方式：
-   * Java API **Timer 类** 并不适合用于那些需要长期在后台运行的定时任务。
-   * Android API **Alarm 机制**
+}
+```
 
+### 02. Serializable
 
+1. 简介
+
+   **`Serializable `** 是序列化的一种，表示**将一个对象转换成可存储或可传输的状态**。序列化后的对象可以在**网络**上进行**传输**，也可以**存储到本地**。
+
+2. 使用
+
+   实现 **`Serializable `** 接口就可以了。
+
+3. 获取
+
+   ```java
+   Value value = (Value) getIntent().getSerializableExtra("key");// 根据键获取值需要强制转换
+   ```
+
+### 03. Parcelable
+
+1. 简介
+
+   **`Parcelable `** 是将一个**完整的对象**进行**分解**，而分解后的**每一部分**都是 **Intent** 所**支持**的**数据类型**，这样也就实现**对象传递**的功能了。
+
+2. 使用
+
+   ```java
+   import android.os.Parcel;
+   import android.os.Parcelable;
+
+   public class Car implements Parcelable {
+
+     private String name;
+     private int imageId;
+
+     @Override
+     public int describeContents() {
+       return 0;
+     }
+
+     @Override
+     public void writeToParcel(Parcel dest, int flags) {
+       dest.writeString(this.name);// 写出 name
+       dest.writeInt(this.imageId);// 写出 imageId
+     }
+
+     protected Car(Parcel in) {
+       this.name = in.readString();// 读 name
+       this.imageId = in.readInt();// 读 imageId
+     }
+
+     public static final Parcelable.Creator<Car> CREATOR = new Parcelable.Creator<Car>() {
+
+       @Override
+       public Car createFromParcel(Parcel source) {
+         return new Car(source);
+       }
+
+       @Override
+       public Car[] newArray(int size) {
+         return new Car[size];
+       }
+     };
+   }
+   ```
+
+   * 必须重写 **`describeContents()`** 方法和 **`writeToParcel()`** 方法
+     * `describeContents()` 方法返回 **0**
+     * `writeToParcel()` 方法将实体类中的字段逐个写出
+   * 提供一个名为 **`CREATOR`** 的常量，创建 **`Parcelable.Creator`** 接口的一个实现，重写了 `createFromParcel()` 方法和 `newArray()` 方法
+     * `createFromParcel()` 方法中**读取**所写入的字段，同时**读取顺序一定要和写入的顺序相同**
+     * `newArray()` 方法根据参数中 `size` 返回数组
+
+3. 获取
+
+   ```java
+   Value value = (Value) getIntent().getParcelableExtra("key");// 根据键获取值需要强制转换
+   ```
+
+4. 区别
+
+   **`Serializable `** 方式较为简单，但由于会把整个对象进行序列化，因此效率会比 **`Parcelable `** 方式低一些，所以通常情况下推荐使用 **`Parcelable `** 方式。
+
+### 04. 定制自己的日志工具
+
+```java
+public class LogUtils {
+
+  public static final int VERBOSE = 1;
+  public static final int DEBUG = 2;
+  public static final int INFO = 3;
+  public static final int WARN = 4;
+  public static final int ERROR = 5;
+  public static final int NOTHING = 6;
+
+  public static int level = VERBOSE;
+
+  public static void v(String tag, String msg) {
+    if (level <= VERBOSE) {
+      Log.v(tag, msg);
+    }
+  }
+
+  public static void d(String tag, String msg) {
+    if (level <= DEBUG) {
+      Log.d(tag, msg);
+    }
+  }
+
+  public static void i(String tag, String msg) {
+    if (level <= INFO) {
+      Log.i(tag, msg);
+    }
+  }
+
+  public static void w(String tag, String msg) {
+    if (level <= WARN) {
+      Log.w(tag, msg);
+    }
+  }
+
+  public static void e(String tag, String msg) {
+    if (level <= ERROR) {
+      Log.e(tag, msg);
+    }
+  }
+
+}
+```
+
+### 05. 调试
+
+1. 方式一：
+   1. 打断点
+   2. 调试运行
+   3. 逐行运行
+2. 方式二：
+   1. 随时进入调试
+   2. 点击工具栏 **`Attach debugger to Android process`**
+
+### 06. 定时任务
+
+Android 中的**定时任务**一般有**两种**实现方式，一种是使用 **Java API** 里提供的 **Timer** 类，一种是使用 **Android** 的 **Alarm** 机制。这两种方式在多数情况下都能实现**类似的效果**，但 **Timer** 有一个明显的**短板**，它并**不太适用于那些需要长期在后台运行的定时任务**。我们都知道，为了能让电池更加耐用，每种手机都会有自己的**休眠策略**，Android 手机就会在长时间不操作的情况下自动让 **CPU** 进入到**睡眠状态**，这就有可能导致 Timer 中的定时任务**无法正常运行**。而 **Alarm** 则**具有唤醒 CPU 的功能**，它可以保证在大多数情况下需要执行定时任务的时候 CPU 都能正常工作。需要注意，这里唤醒 CPU 和唤醒屏幕完全不是一个概念，千万不要产生混淆。
+
+### 07. Alarm 机制
+
+1. 入门代码
+
+   ```java
+   AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);// 利用上下文获取管理对象
+   long triggerAtTime = SystemClock.elapsedRealtime() + 10 * 1000;// 10秒之后执行
+   Intent intent = new Intent(this, MainActivity.class);// 意图
+   PendingIntent pendingIntent = PendingIntent.getActivity(this, 23, intent, 0);// 延迟意图
+   alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pendingIntent);// 启动计时
+   ```
+
+2. 代码解释
+
+   * 上下文获取 **`AlarmManager`** 实例
+   * 调用 `AlarmManager` 的 **`set()`** 方法设置一个定时任务
+     * **第一个参数**是一个整型参数，用于指定 `AlarmManager` 的**工作类型**。
+       * **`ELAPSED_REALTIME`** 表示让定时任务的**触发时间**从**系统开机**开始算起，但**不会唤醒** CPU。
+       * **`ELAPSED_REALTIME_WAKEUP`** 表示让定时任务的**触发时间**从**系统开机**开始算起，但**会唤醒** CPU。
+       * **`RTC`** 表示让定时任务的**触发时间**从 **1970年01月01日 00:00:00** 开始算起，但**不会唤醒** CPU。
+       * **`RTC_WAKEUP`** 表示让定时任务的**触发时间**从 **1970年01月01日 00:00:00** 开始算起，但**会唤醒** CPU。
+     * **第二个参数**是一个长整型参数，用于**指定**定时任务**触发的时间**，以**毫秒**为**单位**。
+     * **第三个参数**是一个 PendingIntent 一般定时**启动广播或服务**。
+   * **`SystemClock.elapsedRealtime()`** 方法获取**系统开机至今**所经历的时间毫秒数
+   * **`SystemClock.currentThreadTimeMillis()`** 方法获取**从 1970年01月01日 00:00:00 开始至今**所经历的时间毫秒数
+
+3. 实现长时间后台定时运行的服务
+
+   * 服务
+
+   ```java
+   public class LongRunningService extends Service {
+
+     @Nullable
+     @Override
+     public IBinder onBind(Intent intent) {
+       return null;
+     }
+
+     @Override
+     public int onStartCommand(Intent intent, int flags, int startId) {
+       new Thread(new Runnable() {
+
+         @Override
+         public void run() {
+           // 这里执行具体的业务逻辑操作
+         }
+       }).start();
+       AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+       int anHour = 1 * 1000;// [一小时]一分钟的毫秒数
+       long triggerAtTime = SystemClock.elapsedRealtime() + anHour;// 开机时间 + 指定时间
+       Intent intents = new Intent(this, LongRunningService.class);// 指定自己
+       PendingIntent pendingIntent = PendingIntent.getService(this, 0, intents, 0);
+       alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pendingIntent);// 定时启动服务自己
+       return super.onStartCommand(intent, flags, startId);
+     }
+
+   }
+   ```
+
+   * 启动
+
+   ```java
+   Intent intent = new Intent(this, LongRunningService.class);
+   startService(intent);
+   ```
+
+   * 子线程
+
+   在 `onStartCommand()` 方法中开启了一个**子线程**，这个是子线程是**有必要的**，因为**逻辑操作**也是需要**耗时**的，如果**放在主线程中执行**可能会对**定时任务**的**准确性**造成轻微的**影响**。
+
+4. 注意
+
+   从 Android 4.4 系统开始，Alarm 任务的**触发时间**将会变得**不准确**，**有可能会延迟一段时间后任务才能得到执行**。这并不是个 Bug ，而是系统在**耗电性能**方面进行的**优化**。系统会**自动检测**目前**有多少 Alarm 任务**存在，然后将**触发时间相近**的几个任务**放在一起执行**，这就可以大幅度**减少 CPU 被唤醒的次数**，从而有效**延长电池的使用时间**。
+
+   当然，如果你要求 Alarm 任务的执行时间**必须准确无误**，Android 仍然提供了解决方案。使用 AlarmManager 的 `setExact()` 方法来替代 `set()` 方法，就基本上可以保证任务能够准时执行了。
+
+### 08. Doze 模式
+
+1. 起因
+
+   虽然 Android 每个系统版本都在**手机电量**方面努力**优化**，但一直没能解决**后台服务泛滥**，**手机电量消耗过快**的问题。于是在  **Android 6.0** 系统中，加入了一个全新的 **Doze** 模式，从而可以大幅度地**延长**电池的使用**寿命**。
+
+2. 概况
+
+   当用户的设备是  **Android 6.0** 或以上时，如果设备未插接电源，处于静止状态（ Android 7.0 删除这一条件 ），且屏幕关闭了一段时间之后，就会进入到 Doze 模式。在 Doze 模式下，系统会对 CPU 、网络、Alarm 等活动进行限制，从而延长了电池的使用寿命。
+
+   当然系统并不会一直处于 Doze 模式，而是会间歇性地退出 Doze 模式一小段时间，在这段时间中，应用就可以去完成它们的同步操作、Alarm 任务等等。
+
+3. 工作过程图
+
+   ![Doze](http://osxmqydw4.bkt.clouddn.com/doze.png)
+
+   * 可以看到，随着设备**进入 Doze 模式**的**时间越长**，**间歇性地退出 Doze 模式**的**时间间隔**也会**越长**。因为如果设备长时间不使用的话，是没必要频繁退出 Doze 模式来执行同步等操作的，Android 在这些细节上的把控使得电池寿命进一步得到了延长。
+
+4. 在 Doze 模式下受限功能
+
+   * 网络访问被禁止
+   * 系统忽略唤醒 CPU 或者屏幕操作
+   * 系统不再执行 WiFi 扫描
+   * 系统不再执行同步服务
+   * Alarm 任务将会在下次退出 Doze 模式的时候执行
+
+5. 注意
+
+   * 在 Doze 模式下 Alarm 任务将会变得不准时
+   * 特殊需求使 Alarm 任务在 Doze 模式下必须正常执行
+     * `alarmManager.setAndAllowWhileIdle();`
+     * `alarmManager.setExactAndAllowWhileIdle();`
+
+6. 官方介绍
+
+   * [对低电耗模式和应用待机模式进行针对性优化](https://developer.android.com/training/monitoring-device-state/doze-standby.html?hl=zh-cn)
+
+### 09. 多窗口模式编程
+
+1. 生命周期
+
+   * 在多窗口模式并不会改变原有的生命周期，将**最近**与用户**交互**的活动设置为**运行状态**，另一个活动设置为**暂停状态**。
+
+   ```java
+   // 启动界面
+   JustDo23: --> onCreate()
+   JustDo23: --> onStart()
+   JustDo23: --> onResume()
+   // 点击 OverView 按钮
+   JustDo23: --> onPause()
+   JustDo23: --> onStop()
+   // 拖动至多窗口
+   JustDo23: --> onDestroy()
+   JustDo23: --> onCreate()
+   JustDo23: --> onStart()
+   JustDo23: --> onResume()
+   JustDo23: --> onPause()
+   JustDo23: --> onResume()
+   // 选择另一多窗口
+   JustDo23: --> onPause()
+   // 选择当前窗口
+   JustDo23: --> onResume()
+   ```
+
+   * 类似**横竖屏**界面被销毁并重新创建
+   * 界面在**运行状态**和**暂停状态**之间切换
+   * 逻辑：最好**不要**在活动 **`onPause()`** 方法中去处理视频播放器的暂停逻辑，而是应该在 **`onStop()`** 方法中去处理**暂停**，并且在 **`onStart()`** 方法中**恢复**视频的播放。
+
+2. 避免重新创建
+
+   ```xml
+   <activity
+     android:name=".chapter13.MultiWindowActivity"
+     android:configChanges="orientation|keyboardHidden|screenSize|screenLayout" />
+   ```
+
+   * 不管是**横竖屏**还是**多窗口**都不会销毁重新创建，而是会将屏幕发生变化的事件通知到 Activity 的  **`onConfigurationChanged()`** 方法中。
+
+3. 禁用
+
+   * 在 `AndroidManifest.xml` 中的 `<application />` 标签中
+
+     ```xml
+     <application
+       android:resizeableActivity="false"/>
+     ```
+
+   * 除此之外必须设置 `targetSdkVersion 24` 及以上，如果是 24 以下的版本仍需在 Activity 添加配置
+
+     ```xml
+     <activity
+       android:screenOrientation="portrait" />
+     ```
+
+### 10. Lambda 表达式
+
+1. 简介
+
+   Java 8 中非常有特色的功能。Lambda 表达式本质上是一种匿名方法，它没有方法名，没有访问修饰符和返回值类型，使用他来编写代码将会更加简洁。
+
+2. 配置
+
+   * `app/build.gradle` 文件
+
+     ```groovy
+     android {
+         jackOptions.enabled = true;// 支持 Lambda 表达式
+       }
+       compileOptions {// 编译选项
+         sourceCompatibility JavaVersion.VERSION_1_8
+         targetCompatibility JavaVersion.VERSION_1_8
+       }
+     }
+     ```
+
+3. 使用
+
+   * 启动线程
+
+     * Java 7
+
+       ```java
+       new Thread(new Runnable() {
+
+         @Override
+         public void run() {
+           // 处理具体逻辑
+         }
+       }).start();
+       ```
+
+     * Java 8
+
+       ```java
+       new Thread(() -> {
+         // 处理具体逻辑
+       }).start();
+       ```
+
+   * 实例化 Runnable
+
+     * Java 7
+
+       ```java
+       private Runnable runnable = new Runnable() {
+
+         @Override
+         public void run() {
+           // 处理具体逻辑
+         }
+       };
+       ```
+
+     * Java 8
+
+       ```java
+       private Runnable runnableScroll = () -> {
+         // 处理具体逻辑
+       };
+       ```
+
+   * 设置点击事件
+
+     * Java 7
+
+       ```java
+       findViewById(R.id.bt_click).setOnClickListener(new View.OnClickListener() {
+
+         @Override
+         public void onClick(View v) {
+           // 处理具体逻辑
+         }
+       });
+       ```
+
+     * Java 8
+
+       ```java
+       findViewById(R.id.bt_click).setOnClickListener(v -> {
+         // 处理具体逻辑
+       });
+       ```
+
+4. 规律
+
+   其实**只要**是符合**接口**中只有**一个待实现方法**这个**规则**的功能，都是可以使用 **Lamabda** 表达式来编写的。
+
+### 11. 小结
+
+1. 序列化两种方式 `Serializable` 和 `Parcelable` 原理及异同。
+2. 定时任务更多知识需要学习使用。
+3. 针对  Doze 模式查阅官方文档。
