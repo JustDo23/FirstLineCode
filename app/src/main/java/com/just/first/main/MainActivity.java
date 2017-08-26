@@ -58,6 +58,7 @@ import com.just.first.chapter12.ToolbarActivity;
 import com.just.first.chapter13.AlarmActivity;
 import com.just.first.chapter13.LambdaActivity;
 import com.just.first.chapter13.MultiWindowActivity;
+import com.just.first.chapter14.weather.ChooseAreaActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,6 +148,7 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
     chapterList.add("13.5.1 定时任务 Alarm 机制");
     chapterList.add("13.6.2 多窗口生命周期");
     chapterList.add("13.7.1 Lambda 表达式");
+    chapterList.add("14.4.1 天气选择城市");
   }
 
   @Override
@@ -302,6 +304,9 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         break;
       case "13.7.1 Lambda 表达式":
         startActivity(new Intent(this, LambdaActivity.class));
+        break;
+      case "14.4.1 天气选择城市":
+        startActivity(new Intent(this, ChooseAreaActivity.class));
         break;
     }
   }

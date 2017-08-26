@@ -9,7 +9,9 @@
   </style>
 
   <!-- 全屏 -->
-  <style name="FullScreen" parent="Theme.AppCompat.Light.NoActionBar" />
+  <style name="FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+  </style>
 
   <!-- 状态栏 -->
   <style name="StatusBarTheme" parent="FullScreen" />

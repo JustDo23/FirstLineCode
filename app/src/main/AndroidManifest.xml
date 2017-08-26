@@ -109,6 +109,9 @@
       android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
       android:screenOrientation="portrait" />
     <activity android:name=".chapter13.LambdaActivity" />
+    <activity
+      android:name=".chapter14.weather.ChooseAreaActivity"
+      android:theme="@style/FullScreen" />
 
     <receiver
       android:name=".chapter05.BootCompleteReceiver"
