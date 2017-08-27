@@ -15,11 +15,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.just.first.R;
+import com.just.first.chapter14.db.AreaDao;
 import com.just.first.chapter14.db.City;
 import com.just.first.chapter14.db.County;
 import com.just.first.chapter14.db.Province;
 import com.just.first.chapter14.net.HttpUtils;
 import com.just.first.chapter14.utils.JsonParseUtil;
+import com.just.first.main.MainActivity;
 import com.just.first.utils.ToastUtil;
 
 import org.litepal.crud.DataSupport;
@@ -66,6 +68,7 @@ public class ChooseAreaFragment extends Fragment {
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    new AreaDao().createDB();
     rootView = inflater.inflate(R.layout.weather_choose_area_fragment, container, false);
     findViews();
     initAdapter();
@@ -101,10 +104,17 @@ public class ChooseAreaFragment extends Fragment {
             break;
           case LEVEL_COUNTY:
             selectCounty = countyList.get(position);
-            Intent intent = new Intent(getActivity(), WeatherActivity.class);
-            intent.putExtra("weather_id", selectCounty.getWeatherId());
-            startActivity(intent);
-            getActivity().finish();
+            if (getActivity() instanceof MainActivity) {
+              Intent intent = new Intent(getActivity(), WeatherActivity.class);
+              intent.putExtra("weather_id", selectCounty.getWeatherId());
+              startActivity(intent);
+              getActivity().finish();
+            } else if (getActivity() instanceof WeatherActivity) {
+              WeatherActivity activity = (WeatherActivity) getActivity();
+              activity.drawerLayout.closeDrawers();
+              activity.srl_weather.setRefreshing(true);
+              activity.requestWeather(selectCounty.getWeatherId());
+            }
             break;
         }
       }
