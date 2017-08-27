@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="?attr/actionBarSize">
+
+  <TextView
+    android:id="@+id/tv_show_title"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:gravity="center"
+    android:textColor="@android:color/white"
+    android:textSize="18sp"
+    tools:text="Title" />
+
+  <TextView
+    android:id="@+id/tv_show_time"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_alignParentRight="true"
+    android:gravity="center"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:textColor="@android:color/white"
+    android:textSize="14sp"
+    tools:text="今天" />
+
+</RelativeLayout>

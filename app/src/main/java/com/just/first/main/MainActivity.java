@@ -1,7 +1,9 @@
 package com.just.first.main;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -59,6 +61,7 @@ import com.just.first.chapter13.AlarmActivity;
 import com.just.first.chapter13.LambdaActivity;
 import com.just.first.chapter13.MultiWindowActivity;
 import com.just.first.chapter14.weather.ChooseAreaActivity;
+import com.just.first.chapter14.weather.WeatherActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -306,7 +309,13 @@ public class MainActivity extends BaseActivity implements OnBaseOperationListene
         startActivity(new Intent(this, LambdaActivity.class));
         break;
       case "14.4.1 天气选择城市":
-        startActivity(new Intent(this, ChooseAreaActivity.class));
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String weather = sharedPreferences.getString("weather", null);
+        if (weather == null) {
+          startActivity(new Intent(this, ChooseAreaActivity.class));
+        } else {
+          startActivity(new Intent(this, WeatherActivity.class));
+        }
         break;
     }
   }

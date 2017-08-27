@@ -2,9 +2,11 @@ package com.just.first.chapter14.utils;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.just.first.chapter14.db.City;
 import com.just.first.chapter14.db.County;
 import com.just.first.chapter14.db.Province;
+import com.just.first.chapter14.domain.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,6 +97,26 @@ public class JsonParseUtil {
       }
     }
     return false;
+  }
+
+
+  /**
+   * 解析天气信息
+   *
+   * @param response 网络请求数据
+   */
+  public static Weather handleWeatherResponse(String response) {
+    if (!TextUtils.isEmpty(response)) {
+      try {
+        JSONObject weatherObject = new JSONObject(response);
+        JSONArray weatherArray = weatherObject.optJSONArray("HeWeather5");
+        String weatherContent = weatherArray.opt(0).toString();
+        return new Gson().fromJson(weatherContent, Weather.class);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
   }
 
 }
