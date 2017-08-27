@@ -1,15 +1,20 @@
 package com.just.first.chapter14.weather;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.just.first.R;
 import com.just.first.chapter14.ConstantPool;
 import com.just.first.chapter14.domain.Forecast;
@@ -17,6 +22,10 @@ import com.just.first.chapter14.domain.Weather;
 import com.just.first.chapter14.net.HttpUtils;
 import com.just.first.chapter14.utils.JsonParseUtil;
 import com.just.first.utils.ToastUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -46,12 +55,16 @@ public class WeatherActivity extends AppCompatActivity {
 
   private Weather weather;
 
+  private SharedPreferences sharedPreferences;
+  private ImageView iv_bing;// 背景图片
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.weather_activity);
+    initStatusBar();
     findViews();
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     String weatherString = sharedPreferences.getString("weather", null);
     if (weatherString != null) {// 有缓存
       weather = JsonParseUtil.handleWeatherResponse(weatherString);
@@ -60,6 +73,15 @@ public class WeatherActivity extends AppCompatActivity {
       String weatherId = getIntent().getStringExtra("weather_id");
       sl_weather.setVisibility(View.INVISIBLE);
       requestWeather(weatherId);
+    }
+    initBackground();
+  }
+
+  private void initStatusBar() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      View decorView = getWindow().getDecorView();
+      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+      getWindow().setStatusBarColor(Color.TRANSPARENT);
     }
   }
 
@@ -144,6 +166,63 @@ public class WeatherActivity extends AppCompatActivity {
           @Override
           public void run() {
             ToastUtil.showShortToast(WeatherActivity.this, "获取天气信息失败");
+          }
+        });
+      }
+    });
+  }
+
+
+  private void initBackground() {
+    iv_bing = (ImageView) findViewById(R.id.iv_bing);
+    String bing = sharedPreferences.getString("bing", null);
+    if (bing == null) {
+      requestBingPic();
+    } else {
+      loadBingPic(bing);
+    }
+  }
+
+  private void loadBingPic(String bing) {
+    Glide.with(this).load(bing).into(iv_bing);
+  }
+
+  private void requestBingPic() {
+    HttpUtils.sendOkHttpRequest("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1", new Callback() {
+
+      @Override
+      public void onResponse(Call call, Response response) throws IOException {
+        String responseText = response.body().string();
+        if (!TextUtils.isEmpty(responseText)) {
+          try {
+            JSONObject responseObject = new JSONObject(responseText);
+            JSONArray imageArray = responseObject.optJSONArray("images");
+            JSONObject imageObject = imageArray.optJSONObject(0);
+            String imageUrl = imageObject.optString("url");
+            String bingPic = "http://www.bing.com" + imageUrl;
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.putString("bing", bingPic);
+            edit.apply();
+            runOnUiThread(new Runnable() {
+
+              @Override
+              public void run() {
+                loadBingPic(bingPic);
+              }
+            });
+          } catch (JSONException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+
+      @Override
+      public void onFailure(Call call, IOException e) {
+        runOnUiThread(new Runnable() {
+
+          @Override
+          public void run() {
+            ToastUtil.showShortToast(WeatherActivity.this, "必应异常");
           }
         });
       }
