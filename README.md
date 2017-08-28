@@ -4679,3 +4679,88 @@ Android 中的**定时任务**一般有**两种**实现方式，一种是使用 
 1. 序列化两种方式 `Serializable` 和 `Parcelable` 原理及异同。
 2. 定时任务更多知识需要学习使用。
 3. 针对  Doze 模式查阅官方文档。
+
+
+
+
+
+## 第 14 章 开发酷欧天气
+
+### 01. 需求及可行性分析
+
+1. 功能需求
+
+   * 罗列全国所有省市县
+   * 查看全部任意城市天气
+   * 自由切换城市
+   * 提供手动更新及后台自动更新
+
+2. 可行性
+
+   * 省市县接口
+   * 彩云天气接口
+   * 和风天气接口
+
+### 02. Git
+
+1. 注册 GitHub 账号
+2. 创建仓库
+3. 本地项目与远程仓库连接
+
+### 03. 创建数据库和表
+
+1. 数据库使用 LitePal 方便快捷
+
+### 04. 显示天气信息
+
+1. 定义 Gson 实体类
+
+   ```java
+   public class Basic {
+
+     @SerializedName("city")// 字段名
+     public String cityName;// 新名字
+     @SerializedName("id")
+     public String weatherId;
+
+   }
+   ```
+
+2. 动态加载布局
+
+3. 状态栏全屏
+
+   ```java
+   private void initStatusBar() {
+     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {// Android 5.0
+       View decorView = getWindow().getDecorView();
+       decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);// 设置标记全屏
+       getWindow().setStatusBarColor(Color.TRANSPARENT);// 设置透明
+     }
+   }
+   ```
+
+4. 获取必应每日一图
+
+   * 接口 **[http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1](http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1)**
+   * 接口 **`http://www.bing.com/az/hprichbg/rb/BasongcuoNP_ZH-CN9819436811_1920x1080.jpg`**
+
+### 05. 后台更新
+
+1. 启动服务
+2. 定时任务
+
+### 06. 扩展
+
+1. 添加设置功能
+2. 优化软件界面
+3. 允许选择多个城市同时观察
+4. 提供更加完成的天气信息
+5. 主题夜间模式等
+6. 添加有趣的自定义控件
+7. 添加资讯功能
+
+### 06. 小结
+
+1. 在使用 **`Material Design`** 时总是嵌套很多层，如何优化。
+2. 学习知识更重要的是灵活运用，理解掌握实践开发。
