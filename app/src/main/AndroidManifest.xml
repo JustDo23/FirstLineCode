@@ -188,6 +188,11 @@
       android:enabled="true"
       android:exported="true" />
 
+    <service
+      android:name=".chapter14.services.AutoUpdateService"
+      android:enabled="true"
+      android:exported="true" />
+
   </application>
 
 </manifest>

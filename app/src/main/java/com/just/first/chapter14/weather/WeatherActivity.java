@@ -1,5 +1,6 @@
 package com.just.first.chapter14.weather;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -23,6 +24,7 @@ import com.just.first.chapter14.ConstantPool;
 import com.just.first.chapter14.domain.Forecast;
 import com.just.first.chapter14.domain.Weather;
 import com.just.first.chapter14.net.HttpUtils;
+import com.just.first.chapter14.services.AutoUpdateService;
 import com.just.first.chapter14.utils.JsonParseUtil;
 import com.just.first.utils.ToastUtil;
 
@@ -87,6 +89,7 @@ public class WeatherActivity extends AppCompatActivity {
     initBackground();
     initSwipeRefresh();
     initDrawerMenu();
+    startAutoUpdateService();
   }
 
   private void initStatusBar() {
@@ -265,6 +268,11 @@ public class WeatherActivity extends AppCompatActivity {
         });
       }
     });
+  }
+
+  private void startAutoUpdateService() {
+    Intent intent = new Intent(this, AutoUpdateService.class);
+    startService(intent);
   }
 
 }
