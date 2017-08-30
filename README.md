@@ -4764,3 +4764,171 @@ Android 中的**定时任务**一般有**两种**实现方式，一种是使用 
 
 1. 在使用 **`Material Design`** 时总是嵌套很多层，如何优化。
 2. 学习知识更重要的是灵活运用，理解掌握实践开发。
+
+
+
+
+
+## 第 15 章 发布
+
+### 01. 签名
+
+1. 简介
+
+   * Android **系统**要求**只有签名后**的 **APK** 文件**才**可以**安装**。
+   * 点击 **Android Studio** 右侧工具栏的 **`Gradle`** 点击 **`项目名`** 点击 **`:app`** 点击 **`Tasks`** 点击 **`android`** 双击**`signingReport`** 将会输出**签名文件位置及信息**
+      ![debug_key](http://osxmqydw4.bkt.clouddn.com/debug_key.png)
+
+2. 生成签名
+
+   * 导航栏 **`Build`** 点击 **`Generate Signed APK`**
+   * 下一步可以选择 **`Create new…`** 创建新的签名文件
+   * 选择 **`choose existing…`** 指定签名文件
+   * 输入密码指定位置 **`Finish`** 生成签名 APK
+
+3. 使用 Gradle 生成
+
+   * 配置 **`app/build.gradle`** 文件
+
+     ```groovy
+     android {
+       defaultConfig {// 默认配置
+       }
+       signingConfigs {// 签名配置
+         config {
+           storeFile file('xxx.jks')// 签名文件路径
+           storePassword 'Password'// 签名密码
+           keyAlias 'Alias'// 签名别名
+           keyPassword 'Password'// 别名密码
+         }
+       }
+       buildTypes {// 构建类型
+         release {// 发布
+           signingConfig signingConfigs.config// 指定之前的签名配置
+         }
+       }
+     }
+     ```
+
+   * 点击右侧工具栏的 **`Gradle`** 点击 **`项目名`** 点击 **`:app`** 点击 **`Tasks`** 点击 **`build`**
+
+     * **`clean`** 清理当前项目
+     * **`assembleDebug`** 生成测试版 APK
+     * **`assembleRelease`** 生成正式版 APK
+     * **`assemble`** 同时生成正式版和测试版
+
+   * 生成文件在 **`app/build/outputs/apk`** 目录下
+
+     * **`app-release.apk`** 正式签名的 APK
+
+4. 提高安全性
+
+   * 将密码配置在根目录下 **`gradle.properties`** 文件中
+
+     ```groovy
+     # 签名信息
+     KEY_PATH=xxx.jks
+     KEY_PASS=Password
+     ALIAS_NAME=Alias
+     ALIAS_PASS=Password
+     ```
+
+   * 修改 **`app/build.gradle`** 文件
+
+     ```groovy
+     signingConfigs {// 默认配置
+       config {
+         storeFile file(KEY_PATH)// 签名文件路径
+         storePassword KEY_PASS// 签名密码
+         keyAlias ALIAS_NAME// 签名别名
+         keyPassword ALIAS_PASS// 别名密码
+       }
+     }
+     ```
+
+### 02. 多渠道
+
+1. 配置多个渠道
+
+   ```groovy
+   android {
+     defaultConfig {// 默认配置
+     }
+     productFlavors {// 多渠道配置
+       qihoo {// 奇虎360
+         applicationId "com.just.first.qihoo"
+       }
+       baidu {//  百度
+         applicationId "com.just.first.baidu"
+       }
+     }
+   }
+   ```
+
+   * 在 **`productFlavors`** 闭包中添加渠道配置。
+   * 渠道名的闭包中可以复写 **`defaultConfig`** 中的任何一个属性。
+
+2. 差异文件
+
+   * 在 **`app/src`** 目录下新建 **`baidu`** 目录
+   * 在  **`baidu`** 目录下新建 **`java`** 目录和 **`res`** 目录
+     * 右键 **`new`** 选择 **`Folder`** 选择 **`Java Resources Folder`** 以及 **`Res Folder`**
+     * **`java`** 目录存放代码
+     * **`res`** 目录存放资源
+   * 如果需要还可以新建 **`AndroidManifest.xml`** 文件
+   * 在 **`res`** 目录下新建 **`values`** 目录
+     * 右键 **`new`** 选择 **`Android resource directory`** 弹框中选择 **`Source set`** 为 **`baidu`**
+
+       ![values](http://osxmqydw4.bkt.clouddn.com/values.png)
+
+3. 修改应用名
+
+   * 在 **`app/src/baidu/res/values`** 目录下新建 **`strings.xml`** 文件
+
+   * 指定该版本项目名称
+
+     ```xml
+     <resources>
+       <string name="app_name">BaiDuCode</string>
+     </resources>
+     ```
+
+4. 打包
+
+   1. 右侧 **`Gradle Tasks`** 列表中多出几个新的 **`Task`**
+      * **`assembleBaidu`** 只生成百度渠道
+      * **`assembleQihoo`** 只生成奇虎渠道
+   2. 导航栏 **`Build`** 点击 **`Generate Signed APK`**
+      * 提示选择渠道单选或者多选
+
+5. 安装
+
+   ```shell
+   $ adb install xxx.apk
+   ```
+
+### 03. 各平台开发账号
+
+1. 个人开发者
+2. 填写个人资料信息
+3. 发布应用
+
+
+### 04. 嵌入广告进行盈利
+
+1. 谷歌收购了 AdMob 公司，是全球最早致力于移动设备上提供广告服务的公司之一。
+2. 可惜 AdMob 不适合国内开发者。
+3. 国内[腾讯广告联盟](http://e.qq.com/dev/index.html)（原广点通）特别专业。
+4. 注册需要身份证及银行卡照片等进行审核。
+5. 审核通过后在后台新建媒体。
+6. 接下来需要下载 SDK 完成新建媒体并进入等待审核状态。
+7. 审核通过后新建广告位。
+8. 进行 SDK 的接入。
+9. 升级版本进行重新发布。
+
+### 05. 小结
+
+1. 签名流程
+2. 签名对齐
+3. 在 **`app/build.gradle`** 文件中的 **`applicationId`** 与 **`AndroidManifest.xml`** 文件中的 **`package`**
+
