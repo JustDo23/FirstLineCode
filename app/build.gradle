@@ -36,14 +36,17 @@ android {
       signingConfig signingConfigs.config// 指定之前的签名配置
     }
   }
-  productFlavors {// 多渠道配置
-    qihoo {// 奇虎360
-      applicationId "com.just.first.qihoo"
-    }
-    baidu {//  百度
-      applicationId "com.just.first.baidu"
-    }
-  }
+//  productFlavors {// 多渠道配置
+//    air {// air
+//      applicationId "com.just.first"
+//    }
+//    qihoo {// 奇虎360
+//      applicationId "com.just.first.qihoo"
+//    }
+//    baidu {//  百度
+//      applicationId "com.just.first.baidu"
+//    }
+//  }
 }
 
 dependencies {// 依赖库 [本地依赖][库依赖][远程依赖]
